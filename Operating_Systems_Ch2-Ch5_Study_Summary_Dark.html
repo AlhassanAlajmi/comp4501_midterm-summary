@@ -1,0 +1,1263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>OS Midterm Study Summary</title>
+<style>
+:root{
+  color-scheme:dark;
+  --bg:#0f1216;--surface:#171b21;--surface2:#20252d;--text:#e3e7ec;--muted:#98a2ae;--border:#2c333c;
+  --accent:#7ea2ff;--accent-weak:#1c2640;
+  --rem:#4cc382;--rem-bg:#13281c;--mis:#ff7b72;--mis-bg:#331816;--ex:#e6b450;--ex-bg:#2e2412;
+  --conf:#c39bff;--conf-bg:#251b3a;
+  --c1:#1f3155;--c2:#173a28;--c3:#43331a;--c4:#43213c;--c5:#2c2852;--c6:#163b40;
+  --mono:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  --side:290px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:70px}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.6 system-ui,-apple-system,"Segoe UI",Roboto,sans-serif}
+a{color:var(--accent)}
+code,.mono{font-family:var(--mono);font-size:.88em;background:var(--surface2);padding:1px 5px;border-radius:4px}
+pre{font-family:var(--mono);font-size:.85rem;background:var(--surface2);padding:10px 12px;border-radius:8px;overflow-x:auto;margin:8px 0}
+b.k,.k{color:var(--accent);font-weight:650}
+mark{background:#5a4b12;color:#fff3c4;padding:0 3px;border-radius:3px}
+
+/* layout */
+.topbar{position:sticky;top:0;z-index:20;background:rgba(15,18,22,.9);backdrop-filter:blur(8px);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:12px;padding:10px 16px}
+.topbar .ttl{font-weight:700;font-size:.98rem;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.topbar .prog{flex:1;max-width:280px;margin-left:auto;display:flex;align-items:center;gap:8px;font-size:.82rem;color:var(--muted)}
+.bar{flex:1;height:8px;background:var(--surface2);border-radius:6px;overflow:hidden}
+.bar>div{height:100%;background:var(--rem);width:0;transition:width .3s}
+.menu-btn{display:none;border:1px solid var(--border);background:var(--surface);border-radius:8px;padding:6px 10px;font:inherit;cursor:pointer}
+.layout{display:flex;max-width:1280px;margin:0 auto}
+nav.side{width:var(--side);flex-shrink:0;position:sticky;top:53px;height:calc(100vh - 53px);overflow-y:auto;padding:16px 10px 40px 16px;border-right:1px solid var(--border);background:var(--bg)}
+nav.side .grp{margin-bottom:14px}
+nav.side .gh{font-size:.78rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:700;margin:4px 0 4px 8px;display:flex;justify-content:space-between;padding-right:6px}
+nav.side a{display:flex;gap:8px;align-items:center;text-decoration:none;color:var(--text);font-size:.88rem;padding:4px 8px;border-radius:6px;line-height:1.35}
+nav.side a:hover{background:var(--surface2)}
+nav.side a .ck{width:14px;height:14px;border-radius:4px;border:1.5px solid #4a535e;flex-shrink:0;display:inline-flex;align-items:center;justify-content:center;font-size:10px;color:#fff}
+nav.side a.done .ck{background:var(--rem);border-color:var(--rem)}
+nav.side a.done .ck::after{content:"✓"}
+nav.side a.done{color:var(--muted)}
+nav.side a.big{font-weight:650}
+main{flex:1;min-width:0;padding:22px 26px 80px}
+@media (max-width:900px){
+  .menu-btn{display:inline-block}
+  nav.side{position:fixed;left:0;top:53px;z-index:30;background:var(--surface);transform:translateX(-100%);transition:transform .2s;box-shadow:0 10px 30px rgba(0,0,0,.6);width:min(85vw,320px)}
+  nav.side.open{transform:none}
+  main{padding:16px 16px 70px}
+  .topbar .prog{max-width:140px}
+}
+
+/* headings */
+h1.main{font-size:1.8rem;line-height:1.25;margin:4px 0 6px;letter-spacing:-.02em}
+.lead{color:var(--muted);margin:0 0 18px}
+section.chapter{margin-top:34px}
+.chhead{display:flex;align-items:baseline;justify-content:space-between;gap:10px;flex-wrap:wrap;border-bottom:2px solid var(--text);padding-bottom:6px;margin-bottom:14px}
+.chhead h2{margin:0;font-size:1.45rem;letter-spacing:-.01em}
+.chhead .tools button{font:inherit;font-size:.8rem;border:1px solid var(--border);background:var(--surface);border-radius:6px;padding:3px 9px;cursor:pointer;color:var(--muted)}
+
+/* topic cards */
+details.topic{background:var(--surface);border:1px solid var(--border);border-radius:12px;margin-bottom:12px;box-shadow:0 1px 2px rgba(0,0,0,.4)}
+details.topic>summary{list-style:none;cursor:pointer;display:flex;align-items:center;gap:10px;padding:13px 16px;font-weight:650;font-size:1.05rem}
+details.topic>summary::-webkit-details-marker{display:none}
+details.topic>summary .chev{color:var(--muted);transition:transform .15s;font-size:.8rem}
+details.topic[open]>summary .chev{transform:rotate(90deg)}
+details.topic>summary .stud{margin-left:auto;display:flex;align-items:center;gap:6px;font-size:.78rem;font-weight:600;color:var(--muted);border:1px solid var(--border);padding:3px 9px;border-radius:20px;white-space:nowrap;user-select:none}
+details.topic>summary .stud input{width:15px;height:15px;accent-color:var(--rem);margin:0}
+details.topic.done>summary .stud{color:var(--rem);border-color:var(--rem);background:var(--rem-bg)}
+details.topic.done>summary .tname{color:var(--muted)}
+.tbody{padding:0 18px 16px}
+.tbody h4{margin:14px 0 4px;font-size:.8rem;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.tbody ul,.tbody ol{margin:4px 0;padding-left:22px}
+.tbody li{margin:2px 0}
+.tbody p{margin:6px 0}
+.what{font-size:1.02rem}
+
+/* boxes */
+.box{border-radius:10px;padding:10px 14px;margin:10px 0;border-left:4px solid}
+.box .bt{font-weight:700;font-size:.85rem;margin-bottom:2px}
+.box.rem{background:var(--rem-bg);border-color:var(--rem)} .box.rem .bt{color:var(--rem)}
+.box.mis{background:var(--mis-bg);border-color:var(--mis)} .box.mis .bt{color:var(--mis)}
+.box.ex{background:var(--ex-bg);border-color:var(--ex)} .box.ex .bt{color:var(--ex)}
+.box.conf{background:var(--conf-bg);border-color:var(--conf)} .box.conf .bt{color:var(--conf)}
+.box.exam{background:var(--accent-weak);border-color:var(--accent)} .box.exam .bt{color:var(--accent)}
+.box p{margin:3px 0}.box ul{margin:3px 0}
+
+/* tables */
+.tw{overflow-x:auto;margin:10px 0;border:1px solid var(--border);border-radius:10px}
+table{border-collapse:collapse;color:var(--text);width:100%;font-size:.92rem;background:var(--surface)}
+th,td{padding:8px 10px;text-align:left;vertical-align:top;border-bottom:1px solid var(--border)}
+th{background:var(--surface2);font-weight:650;white-space:nowrap}
+tr:last-child td{border-bottom:none}
+td:first-child{font-weight:600}
+
+/* diagrams */
+.diag{background:var(--surface2);border-radius:10px;padding:14px;margin:10px 0;overflow-x:auto}
+.cap{font-size:.8rem;color:var(--muted);margin-top:6px}
+.stack{display:flex;flex-direction:column;gap:4px;max-width:420px;margin:0 auto}
+.stack div{padding:7px 10px;border-radius:6px;text-align:center;font-size:.86rem;font-weight:600;border:1px solid rgba(255,255,255,.08)}
+.flow{display:flex;align-items:center;gap:6px;flex-wrap:wrap;justify-content:center}
+.flow .n{padding:7px 11px;border-radius:8px;font-size:.84rem;font-weight:600;background:var(--surface);border:1.5px solid var(--border);text-align:center}
+.flow .a{color:var(--muted);font-weight:700}
+.gscroll{overflow-x:auto;padding:0 8px 2px}
+.gantt{display:flex;min-width:420px;margin:6px 0 22px;position:relative}
+.gantt .s{border:1px solid rgba(255,255,255,.22);border-right:none;text-align:center;font-size:.8rem;font-weight:700;padding:7px 0;position:relative;min-width:22px}
+.gantt .s:last-child{border-right:1px solid rgba(255,255,255,.22)}
+.gantt .s .t0{position:absolute;left:-6px;bottom:-19px;font-size:.72rem;color:var(--muted);font-weight:500}
+.gantt .s .t1{position:absolute;right:-6px;bottom:-19px;font-size:.72rem;color:var(--muted);font-weight:500}
+.mem{display:flex;flex-direction:column;width:200px;border:1.5px solid #4a535e;border-radius:6px;overflow:hidden;font-size:.82rem;font-weight:600;text-align:center}
+.mem div{padding:6px;border-bottom:1px solid rgba(255,255,255,.1)}
+.grid2{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:10px;margin:10px 0}
+.mini{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:10px 12px}
+.mini b{display:block;margin-bottom:2px}
+.pill{display:inline-block;font-size:.75rem;font-weight:700;padding:1px 8px;border-radius:12px;background:var(--surface2);color:var(--muted);margin-right:4px}
+.formula{font-family:Georgia,"Times New Roman",serif;font-size:1.15rem;text-align:center;background:var(--surface);border:1.5px dashed var(--accent);border-radius:10px;padding:10px;margin:10px 0}
+.scope{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 18px;font-size:.92rem}
+.scope ul{margin:4px 0;padding-left:20px}
+.final h2{font-size:1.45rem}
+.memsheet{columns:2 340px;column-gap:18px}
+.memsheet .mini{break-inside:avoid;margin-bottom:10px;font-size:.9rem}
+.memsheet .mini ul{margin:2px 0;padding-left:18px}
+.vs{display:grid;grid-template-columns:1fr 1fr;gap:0;border:1px solid var(--border);border-radius:10px;overflow:hidden;margin-bottom:10px;background:var(--surface)}
+.vs .h{grid-column:1/3;background:var(--conf-bg);color:var(--conf);font-weight:700;padding:7px 12px}
+.vs>div:not(.h){padding:8px 12px;font-size:.9rem}
+.vs>div:nth-child(2){border-right:1px solid var(--border)}
+.vs .tip{grid-column:1/3;border-top:1px solid var(--border);background:var(--surface2);font-size:.85rem}
+@media (max-width:560px){.vs{grid-template-columns:1fr}.vs .h,.vs .tip{grid-column:1}.vs>div:nth-child(2){border-right:none;border-bottom:1px solid var(--border)}h1.main{font-size:1.45rem}}
+.totop{position:fixed;right:16px;bottom:16px;border:1px solid var(--border);background:var(--surface);border-radius:50%;width:42px;height:42px;font-size:1.1rem;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,.5)}
+@media print{nav.side,.topbar,.totop{display:none}details.topic{break-inside:avoid}}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <button class="menu-btn" id="menuBtn" aria-label="Open navigation">☰</button>
+  <div class="ttl">OS Midterm — Study Summary</div>
+  <div class="prog"><span id="progTxt">0/0</span><div class="bar"><div id="progBar"></div></div></div>
+</div>
+<div class="layout">
+<nav class="side" id="side"></nav>
+<main id="main">
+
+<h1 class="main" id="top">Operating Systems Midterm — Complete Study Summary</h1>
+<p class="lead">COMP4501 · Chapters 2–5 · Built from your lecture slides, limited to the official midterm scope. Tick <b>Studied</b> on each topic as you go — your progress is saved in this browser.</p>
+
+<div class="scope">
+<b>📌 Exam format:</b> True/False · Multiple choice · Short answer · Problem solving. About <b>30%</b> remember/understand, <b>70%</b> apply/analyze/evaluate — so focus on <i>using</i> ideas (scenarios, comparisons, calculations), not just definitions.
+<details style="margin-top:8px"><summary style="cursor:pointer"><b>What is NOT in the exam (left out of this summary)</b></summary>
+<ul>
+<li><b>Ch 2:</b> the figures of 2.2 (shell, GUI screenshots) and 2.3 (copy-file example, standard API, API–syscall–OS, parameter table figure, printf→write, Arduino &amp; FreeBSD figures), the Windows/Unix system-call table, the system-call types from <i>File management</i> down to <i>Protection</i>, section 2.4 <i>System Services</i>, section 2.7 <i>Design &amp; Implementation</i> (incl. policy vs mechanism), Figs 2.8.5–2.8.6 (macOS/iOS structure, Darwin).</li>
+<li><b>Ch 3:</b> <i>Multitasking in mobile systems</i>; Fig 3.3.4 (Windows CreateProcess program).</li>
+<li><b>Ch 4:</b> Windows threads, Java threads and Java Executor framework (section 4.4); Java thread pools, Figs 4.5.3–4.5.4, Grand Central Dispatch → Intel TBB (section 4.5).</li>
+<li><b>Ch 1</b> is not listed in the midterm scope.</li>
+</ul></details>
+</div>
+
+<!-- ======================================================= CHAPTER 2 -->
+<section class="chapter" id="ch2" data-ch="Chapter 2 — OS Structures">
+<div class="chhead"><h2>Chapter 2 — Operating System Structures</h2><div class="tools"><button data-exp="ch2">Expand all</button> <button data-col="ch2">Collapse all</button></div></div>
+
+<details class="topic" id="c2-services"><summary><span class="chev">▶</span><span class="tname">OS Services</span></summary><div class="tbody">
+<h4>What is it?</h4>
+<p class="what">The OS provides an <b class="k">environment</b> to run programs, and <b class="k">services</b> to programs and users. The slides split them into <b>two sets</b>.</p>
+<div class="tw"><table>
+<tr><th>Set 1 — Helpful to the <u>user</u></th><th>What it means</th></tr>
+<tr><td>User interface (UI)</td><td>CLI, GUI, touch-screen, or batch</td></tr>
+<tr><td>Program execution</td><td>Load program into memory → run it → end it <b>normally or abnormally</b> (indicating error)</td></tr>
+<tr><td>I/O operations</td><td>A running program may need I/O (a file or an I/O device)</td></tr>
+<tr><td>File-system manipulation</td><td>Read/write, create/delete, search, list file info, permission management</td></tr>
+<tr><td>Communications</td><td>Processes exchange info on the <b>same computer or over a network</b> — via <b>shared memory</b> or <b>message passing</b> (packets moved by the OS)</td></tr>
+<tr><td>Error detection</td><td>Errors in CPU/memory hardware, I/O devices, user programs → OS takes the right action for each. Debugging facilities help users/programmers.</td></tr>
+</table></div>
+<div class="tw"><table>
+<tr><th>Set 2 — Efficient operation of the <u>system itself</u> (resource sharing)</th><th>What it means</th></tr>
+<tr><td>Resource allocation</td><td>Give CPU cycles, main memory, file storage, I/O devices to multiple users/jobs</td></tr>
+<tr><td>Logging</td><td>Keep track of <b>which users use how much and what kinds</b> of resources</td></tr>
+<tr><td>Protection &amp; security</td><td><b>Protection</b> = all access to resources is controlled (processes don't interfere). <b>Security</b> = defend from <b>outsiders</b>: user authentication, defending external I/O devices from invalid access.</td></tr>
+</table></div>
+<div class="box rem"><div class="bt">✅ Remember</div><p>Only <b>3</b> services are in the "system" set: <b>resource allocation, logging, protection &amp; security</b>. Everything else helps the user.</p></div>
+<div class="box mis"><div class="bt">❌ Common mistake</div><p>Putting <b>error detection</b> or <b>communications</b> in the system-efficiency set. They are user-helpful.</p></div>
+<div class="box conf"><div class="bt">🔀 Common confusion — Protection vs Security</div><p>Protection = <i>inside</i> control (who may access what). Security = keeping <i>outsiders</i> out (passwords/authentication).</p></div>
+<div class="box ex"><div class="bt">💡 Example</div><p>A server records CPU-seconds used per department for billing → <b>logging</b>. A password before remote login → <b>security</b>.</p></div>
+</div></details>
+
+<details class="topic" id="c2-ui"><summary><span class="chev">▶</span><span class="tname">User Interfaces: CLI, GUI, Touchscreen</span></summary><div class="tbody">
+<div class="tw"><table>
+<tr><th>Interface</th><th>Key points</th></tr>
+<tr><td>CLI (command-line interpreter)</td><td>Direct command entry. Sometimes in the <b>kernel</b>, sometimes a <b>systems program</b>. Can have multiple flavors = <b class="k">shells</b>. Fetches a command and executes it. Commands are either <b>built-in</b> or just <b>names of programs</b>.</td></tr>
+<tr><td>GUI</td><td>User-friendly <b>desktop metaphor</b>; mouse, keyboard, monitor; icons for files/programs/actions; folders. Invented at <b>Xerox PARC</b>.</td></tr>
+<tr><td>Touchscreen</td><td>Mouse not possible/desired → <b>gestures</b>, <b>virtual keyboard</b>, <b>voice commands</b>.</td></tr>
+</table></div>
+<ul>
+<li>Many systems have <b>both</b> CLI and GUI: Windows = GUI + CLI "command" shell; Mac OS X = "Aqua" GUI + UNIX kernel + shells; Unix/Linux = CLI + optional GUI (CDE, KDE, GNOME).</li>
+</ul>
+<div class="box rem"><div class="bt">✅ Remember</div><p>If commands are just program names, <b>adding new features doesn't require changing the shell</b> — you just add a new program.</p></div>
+</div></details>
+
+<details class="topic" id="c2-syscalls"><summary><span class="chev">▶</span><span class="tname">System Calls &amp; APIs</span></summary><div class="tbody">
+<h4>What is it?</h4>
+<p class="what">A <b class="k">system call</b> is the <b>programming interface to the services provided by the OS</b>. Typically written in a high-level language (<b>C or C++</b>).</p>
+<h4>Key points</h4>
+<ul>
+<li>Programs usually use an <b class="k">API</b> (Application Programming Interface) instead of calling system calls directly.</li>
+<li>The 3 most common APIs: <b>Win32 API</b> (Windows), <b>POSIX API</b> (virtually all UNIX, Linux, Mac OS X), <b>Java API</b> (JVM).</li>
+</ul>
+<div class="diag"><div class="flow"><div class="n" style="background:var(--c1)">User program</div><span class="a">→ calls</span><div class="n" style="background:var(--c2)">API function<br><small>(run-time support library)</small></div><span class="a">→</span><div class="n" style="background:var(--c3)">System-call interface<br><small>table indexed by number</small></div><span class="a">→</span><div class="n" style="background:var(--c4)">Kernel routine</div></div><div class="cap">The status and any return values travel back the same way.</div></div>
+<h4>How a system call is implemented</h4>
+<ol>
+<li>Each system call has a <b>number</b>.</li>
+<li>The system-call interface keeps a <b>table indexed by these numbers</b>.</li>
+<li>It invokes the right kernel routine and returns the <b>status</b> and any <b>return values</b>.</li>
+</ol>
+<ul>
+<li>The caller needs to know <b>nothing</b> about how the call is implemented — just obey the API and know what the OS will do.</li>
+<li>Most details are hidden by the API and managed by the <b>run-time support library</b> (functions built into libraries included with the compiler).</li>
+</ul>
+<div class="box conf"><div class="bt">🔀 Common confusion — API vs System call</div><p><b>API</b> = library functions the programmer calls (portable). <b>System call</b> = the actual request into the kernel. One API function may make one or more system calls.</p></div>
+<div class="box ex"><div class="bt">💡 Example</div><p>A program written only with POSIX functions can be compiled on Linux, macOS and UNIX — not natively on Windows (Win32).</p></div>
+</div></details>
+
+<details class="topic" id="c2-params"><summary><span class="chev">▶</span><span class="tname">System-Call Parameter Passing</span></summary><div class="tbody">
+<p class="what">Often a system call needs more information than just its number (e.g., file name, buffer, size). There are <b>3 ways</b> to pass parameters:</p>
+<div class="tw"><table>
+<tr><th>Method</th><th>How</th><th>Limit?</th></tr>
+<tr><td>1. Registers</td><td>Put parameters in CPU registers. <b>Simplest.</b></td><td>Yes — may be more parameters than registers</td></tr>
+<tr><td>2. Block / table</td><td>Store parameters in a block in memory; pass the <b>address of the block in a register</b>. Used by <b>Linux and Solaris</b>.</td><td>No limit</td></tr>
+<tr><td>3. Stack</td><td>Program <b>pushes</b> parameters onto the stack; OS <b>pops</b> them off.</td><td>No limit</td></tr>
+</table></div>
+<div class="box rem"><div class="bt">✅ Remember</div><p><b>Block and stack</b> methods do not limit the number or length of parameters. Linux &amp; Solaris use the <b>block</b> method.</p></div>
+<div class="box ex"><div class="bt">💡 Example</div><p>A call needs 9 parameters but only 4 registers exist → store the 9 in a block and pass its address in 1 register.</p></div>
+</div></details>
+
+<details class="topic" id="c2-pc"><summary><span class="chev">▶</span><span class="tname">Process-Control System Calls (+ Arduino &amp; FreeBSD)</span></summary><div class="tbody">
+<p class="what">The <b>process control</b> type of system calls (the other types are outside the exam scope):</p>
+<div class="grid2">
+<div class="mini">• create / terminate process<br>• end, abort<br>• load, execute<br>• get / set process attributes<br>• wait for time</div>
+<div class="mini">• wait event, signal event<br>• allocate and free memory<br>• dump memory if error<br>• debugger, single-step execution<br>• <b>locks</b> for managing access to shared data between processes</div>
+</div>
+<div class="tw"><table>
+<tr><th></th><th>Arduino</th><th>FreeBSD</th></tr>
+<tr><td>Tasking</td><td><b>Single-tasking</b></td><td><b>Multitasking</b> (Unix variant)</td></tr>
+<tr><td>OS?</td><td>No operating system</td><td>Full OS; user login → user's choice of shell</td></tr>
+<tr><td>Running a program</td><td>Program ("sketch") loaded via USB into flash memory; boot loader loads it; single memory space; program exit → shell reloaded</td><td>Shell calls <code>fork()</code> to create a process, then <code>exec()</code> to load the program; shell waits or continues with user commands</td></tr>
+<tr><td>Exit</td><td>—</td><td>exit code <b>0 = no error</b>, <b>&gt; 0 = error code</b></td></tr>
+</table></div>
+</div></details>
+
+<details class="topic" id="c2-link"><summary><span class="chev">▶</span><span class="tname">Linkers &amp; Loaders</span></summary><div class="tbody">
+<div class="diag"><div class="flow"><div class="n" style="background:var(--c1)">Source code</div><span class="a">→ compiler →</span><div class="n" style="background:var(--c2)">Relocatable<br>object files</div><span class="a">→ linker (+ libraries) →</span><div class="n" style="background:var(--c3)">Executable file<br><small>on secondary storage</small></div><span class="a">→ loader →</span><div class="n" style="background:var(--c4)">Program in<br>memory (runs)</div></div></div>
+<ul>
+<li><b class="k">Relocatable object file</b> — compiled code designed to be loaded into <b>any</b> physical memory location.</li>
+<li><b class="k">Linker</b> — combines object files into one <b>binary executable</b>, and brings in libraries.</li>
+<li><b class="k">Loader</b> — brings the executable from disk into memory so it can run.</li>
+<li><b class="k">Relocation</b> — assigns <b>final addresses</b> to program parts and adjusts code and data to match.</li>
+<li>Modern general-purpose systems <b>don't</b> link libraries into executables; they use <b class="k">dynamically linked libraries</b> (DLLs in Windows): loaded <b>as needed</b>, <b>shared</b> by all programs using the same version (<b>loaded once</b>).</li>
+<li>Object and executable files have <b>standard formats</b>, so the OS knows how to load and start them.</li>
+</ul>
+<div class="box conf"><div class="bt">🔀 Static vs Dynamic linking</div><p><b>Static:</b> library code copied into every executable (bigger files, duplicate copies in memory). <b>Dynamic:</b> library loaded once at run time when needed and shared.</p></div>
+</div></details>
+
+<details class="topic" id="c2-abi"><summary><span class="chev">▶</span><span class="tname">Why Applications are OS-Specific (ABI)</span></summary><div class="tbody">
+<p class="what">An app compiled on one OS usually <b>won't run</b> on another OS — because each OS has its <b>own unique system calls</b> and its <b>own file formats</b>.</p>
+<h4>3 ways to make an app run on multiple OSes</h4>
+<ol>
+<li>Write it in an <b>interpreted language</b> (Python, Ruby) whose interpreter exists on many OSes.</li>
+<li>Use a language with a <b>VM</b> that contains the running app (Java).</li>
+<li>Use a <b>standard language</b> (C) and <b>compile separately</b> on each OS.</li>
+</ol>
+<div class="box rem"><div class="bt">✅ Remember</div><p><b class="k">ABI</b> (Application Binary Interface) = the <b>architecture equivalent of an API</b>: defines how binary code components interface for a given <b>OS on a given architecture/CPU</b>.</p></div>
+<div class="box mis"><div class="bt">❌ Common mistake</div><p>Thinking the same OS ⇒ same ABI. A different CPU architecture (ARM vs Intel) means a different ABI.</p></div>
+</div></details>
+
+<details class="topic" id="c2-struct"><summary><span class="chev">▶</span><span class="tname">OS Structures: Monolithic, Layered, Microkernel, Modules, Hybrid</span></summary><div class="tbody">
+<p class="what">A general-purpose OS is a very large program, so it needs a structure. Examples: simple (MS-DOS), more complex (UNIX), layered (an abstraction), microkernel (Mach).</p>
+
+<h4>1. Monolithic — original UNIX</h4>
+<ul><li>Limited by hardware → limited structuring. Two parts: <b>system programs</b> + <b>kernel</b>.</li>
+<li>Kernel = <b>everything below the system-call interface and above the hardware</b>: file system, CPU scheduling, memory management… → <b>many functions in one level</b>.</li>
+<li>Traditional UNIX: "beyond simple but not fully layered". Linux = <b>monolithic plus modular</b>.</li></ul>
+
+<h4>2. Layered approach</h4>
+<div class="diag" style="display:flex;gap:20px;align-items:center;flex-wrap:wrap;justify-content:center">
+<div class="stack" style="width:220px"><div style="background:var(--c4)">Layer N — user interface</div><div style="background:var(--c3)">…</div><div style="background:var(--c2)">Layer 1</div><div style="background:var(--c1)">Layer 0 — hardware</div></div>
+<div class="small" style="max-width:280px">Each layer uses functions and services of <b>only lower-level layers</b>.</div></div>
+
+<h4>3. Microkernel (e.g., Mach; Mac OS X's Darwin is partly based on Mach)</h4>
+<ul><li>Moves as much as possible <b>from the kernel into user space</b>.</li>
+<li>User modules communicate using <b class="k">message passing</b>.</li></ul>
+<div class="tw"><table><tr><th>Benefits ✅</th><th>Detriment ❌</th></tr>
+<tr><td style="font-weight:400">• Easier to <b>extend</b><br>• Easier to <b>port</b> to new architectures<br>• More <b>reliable</b> (less code in kernel mode)<br>• More <b>secure</b></td><td style="font-weight:400"><b>Performance overhead</b> of user-space ↔ kernel-space communication</td></tr></table></div>
+
+<h4>4. Loadable kernel modules (LKMs)</h4>
+<ul><li>Used by many modern OSes (Linux, Solaris). Object-oriented approach.</li>
+<li>Each core component is <b>separate</b>, talks to others over <b>known interfaces</b>, is <b>loadable as needed within the kernel</b>.</li>
+<li>Similar to layers but <b>more flexible</b>.</li></ul>
+
+<h4>5. Hybrid systems</h4>
+<p>Most modern OSes are <b>not one pure model</b>; they combine approaches for performance, security, usability.</p>
+<div class="tw"><table><tr><th>OS</th><th>Hybrid description</th></tr>
+<tr><td>Linux, Solaris</td><td>Kernel in kernel address space (<b>monolithic</b>) + <b>modular</b> (dynamic loading)</td></tr>
+<tr><td>Windows</td><td><b>Mostly monolithic</b> + <b>microkernel</b> for different subsystem personalities</td></tr>
+<tr><td>Mac OS X</td><td>Hybrid, layered: Aqua UI + Cocoa; kernel = <b>Mach microkernel + BSD Unix</b> parts + I/O kit + dynamically loadable modules (kernel extensions)</td></tr>
+</table></div>
+
+<h4>Compare them</h4>
+<div class="tw"><table>
+<tr><th>Structure</th><th>Where services run</th><th>Strength</th><th>Weakness</th></tr>
+<tr><td>Monolithic</td><td>All in kernel, one level</td><td>Fast (no message passing)</td><td>Hard to extend; a bug can affect the whole kernel</td></tr>
+<tr><td>Layered</td><td>Kernel, in layers</td><td>Clean, each layer only uses lower ones</td><td>Rigid</td></tr>
+<tr><td>Microkernel</td><td>Most in user space</td><td>Extensible, portable, reliable, secure</td><td>Communication overhead</td></tr>
+<tr><td>Modules (LKM)</td><td>Kernel, loaded as needed</td><td>Flexible + fast</td><td>—</td></tr>
+</table></div>
+<div class="box ex"><div class="bt">💡 Example</div><p>Need monolithic speed but want to add a driver without rebooting → <b>monolithic + LKMs</b> (Linux style). File system moved to user space and became slower → microkernel <b>message-passing overhead</b>.</p></div>
+<div class="box conf"><div class="bt">🔀 Layers vs Modules</div><p><b>Layers:</b> a layer may only call layers <i>below</i> it. <b>Modules:</b> any module can talk to any other through known interfaces, and modules load when needed.</p></div>
+</div></details>
+
+<details class="topic" id="c2-mobile"><summary><span class="chev">▶</span><span class="tname">Mobile OS: iOS &amp; Android</span></summary><div class="tbody">
+<div class="grid2">
+<div class="mini"><b>iOS (Apple: iPhone, iPad)</b>
+• Structured on <b>Mac OS X</b>, added functionality<br>• Does <b>not</b> run OS X apps natively<br>• Different CPU architecture (<b>ARM</b> vs Intel)
+<div class="stack" style="margin-top:8px"><div style="background:var(--c4)">Cocoa Touch — Objective-C API for apps</div><div style="background:var(--c3)">Media services — graphics, audio, video</div><div style="background:var(--c2)">Core services — cloud computing, databases</div><div style="background:var(--c1)">Core OS — based on Mac OS X kernel</div></div></div>
+<div class="mini"><b>Android (Open Handset Alliance, mostly Google)</b>
+• <b>Open source</b>; similar stack to iOS<br>• Based on a <b>modified Linux kernel</b>: process, memory, device-driver management + adds <b>power management</b><br>• Runtime: core libraries + <b>Dalvik VM</b><br>• Apps written in <b>Java + Android API</b><br>• Java → bytecode → translated to executable that runs in <b>Dalvik</b><br>• Libraries: webkit (browser), SQLite (database), multimedia, smaller libc</div>
+</div>
+<div class="box mis"><div class="bt">❌ Common mistake</div><p>"Android apps run on the standard JVM." No — they run in the <b>Dalvik</b> VM.</p></div>
+</div></details>
+
+<details class="topic" id="c2-boot"><summary><span class="chev">▶</span><span class="tname">Building &amp; Booting an OS</span></summary><div class="tbody">
+<h4>Generating an OS from scratch</h4>
+<div class="diag"><div class="flow"><div class="n">1. Write source</div><span class="a">→</span><div class="n">2. Configure for target system</div><span class="a">→</span><div class="n">3. Compile</div><span class="a">→</span><div class="n">4. Install</div><span class="a">→</span><div class="n">5. Boot</div></div></div>
+<h4>Building Linux</h4>
+<div class="tw"><table><tr><th>Step</th><th>Command</th></tr>
+<tr><td>Download source</td><td>kernel.org</td></tr>
+<tr><td>Configure</td><td><code>make menuconfig</code></td></tr>
+<tr><td>Compile kernel → <b>vmlinuz</b> (kernel image)</td><td><code>make</code></td></tr>
+<tr><td>Compile modules</td><td><code>make modules</code></td></tr>
+<tr><td>Install modules</td><td><code>make modules_install</code></td></tr>
+<tr><td>Install new kernel</td><td><code>make install</code></td></tr></table></div>
+<h4>System boot</h4>
+<ol>
+<li>Power on → execution starts at a <b>fixed memory location</b>.</li>
+<li>A small <b class="k">bootstrap loader</b> (BIOS) in <b>ROM/EEPROM</b> locates the kernel, loads it into memory, starts it.</li>
+<li>Sometimes <b>two-step</b>: ROM code loads a <b>boot block</b> (fixed location) → which loads the bootstrap loader from disk.</li>
+<li>Kernel loads → system running. Boot loaders can offer boot states like <b>single-user mode</b>.</li>
+</ol>
+<div class="box conf"><div class="bt">🔀 UEFI vs GRUB</div><p><b>UEFI</b> = modern <b>replacement for BIOS</b>. <b>GRUB</b> = common bootstrap loader that lets you <b>choose kernel</b> (multiple disks, versions, kernel options).</p></div>
+</div></details>
+
+<details class="topic" id="c2-debug"><summary><span class="chev">▶</span><span class="tname">OS Debugging &amp; Performance Tuning</span></summary><div class="tbody">
+<p class="what"><b>Debugging</b> = finding and fixing errors (bugs). Also includes <b>performance tuning</b>.</p>
+<div class="tw"><table><tr><th>Term</th><th>Meaning</th></tr>
+<tr><td>Log files</td><td>OS writes error information</td></tr>
+<tr><td>Core dump</td><td><b>Application</b> fails → file capturing the <b>process's memory</b></td></tr>
+<tr><td>Crash dump</td><td><b>OS</b> fails → file containing <b>kernel memory</b></td></tr>
+<tr><td>Performance tuning</td><td>Improve performance by <b>removing bottlenecks</b>; OS must compute &amp; display measures of behaviour (e.g., <code>top</code>, Windows Task Manager)</td></tr>
+<tr><td>Trace listings</td><td>Record activities for later analysis</td></tr>
+<tr><td>Profiling</td><td><b>Periodic sampling of the instruction pointer</b> to find statistical trends</td></tr>
+<tr><td>Tracing</td><td>Collects data for a <b>specific event</b> (e.g., steps of a system call)</td></tr>
+</table></div>
+<h4>Tracing tools</h4>
+<div class="tw"><table><tr><th>Tool</th><th>Use</th></tr>
+<tr><td>strace</td><td>Trace <b>system calls</b> invoked by a process</td></tr>
+<tr><td>gdb</td><td>Source-level debugger</td></tr>
+<tr><td>perf</td><td>Collection of Linux performance tools</td></tr>
+<tr><td>tcpdump</td><td>Collects <b>network packets</b></td></tr>
+<tr><td>BCC (BPF Compiler Collection)</td><td>Rich Linux tracing toolkit for <b>user-level ↔ kernel</b> interactions (see also DTrace). E.g., <code>disksnoop.py</code> traces disk I/O.</td></tr></table></div>
+<div class="box rem"><div class="bt">✅ Remember — Kernighan's Law</div><p>"Debugging is twice as hard as writing the code… if you write the code as cleverly as possible, you are, by definition, not smart enough to debug it."</p></div>
+<div class="box conf"><div class="bt">🔀 Profiling vs Tracing · Core dump vs Crash dump</div><p>Profiling = <b>sampling</b> over time (statistics). Tracing = <b>recording a specific event</b>. Core dump = one <b>process</b>; crash dump = the whole <b>kernel</b>.</p></div>
+</div></details>
+</section>
+
+<!-- ======================================================= CHAPTER 3 -->
+<section class="chapter" id="ch3" data-ch="Chapter 3 — Processes">
+<div class="chhead"><h2>Chapter 3 — Processes</h2><div class="tools"><button data-exp="ch3">Expand all</button> <button data-col="ch3">Collapse all</button></div></div>
+
+<details class="topic" id="c3-concept"><summary><span class="chev">▶</span><span class="tname">Process Concept &amp; Memory Layout</span></summary><div class="tbody">
+<h4>What is it?</h4>
+<p class="what">A <b class="k">process</b> is a <b>program in execution</b>. It progresses in <b>sequential fashion</b> — no parallel execution of instructions of a single (single-threaded) process.</p>
+<div style="display:flex;gap:22px;flex-wrap:wrap;align-items:flex-start">
+<div class="diag" style="flex:0 0 auto"><div class="mem">
+<div style="background:var(--c4)">Stack ↓<br><small>params, return addresses, locals</small></div>
+<div style="background:var(--surface);padding:14px">free space</div>
+<div style="background:var(--c3)">Heap ↑<br><small>dynamic (malloc)</small></div>
+<div style="background:var(--c2)">Data<br><small>global variables</small></div>
+<div style="background:var(--c1)">Text<br><small>program code</small></div></div><div class="cap">Process in memory (high address on top)</div></div>
+<div style="flex:1;min-width:240px">
+<h4>Parts of a process</h4>
+<ul>
+<li><b>Text section</b> — program code</li>
+<li><b>Current activity</b> — program counter + processor registers</li>
+<li><b>Stack</b> — temporary data: function parameters, return addresses, local variables</li>
+<li><b>Data section</b> — global variables</li>
+<li><b>Heap</b> — memory allocated dynamically at run time</li>
+</ul></div></div>
+<div class="box conf"><div class="bt">🔀 Program vs Process</div><p><b>Program</b> = <b>passive</b> (executable file on disk). <b>Process</b> = <b>active</b>. A program becomes a process when it's <b>loaded into memory</b> (started by GUI click, command line…). <b>One program can be several processes</b> (e.g., 3 users running the same editor = 1 program, 3 processes).</p></div>
+<div class="box ex"><div class="bt">💡 Example</div><pre>int count;            // Data (global)
+int main(int x){       // x → Stack (parameter)
+  int i;               // Stack (local)
+  int *p = malloc(40); // the 40 bytes → Heap
+}                      // the code itself → Text</pre></div>
+</div></details>
+
+<details class="topic" id="c3-states"><summary><span class="chev">▶</span><span class="tname">Process States</span></summary><div class="tbody">
+<div class="tw"><table><tr><th>State</th><th>Meaning</th></tr>
+<tr><td>New</td><td>Being created</td></tr><tr><td>Running</td><td>Instructions being executed</td></tr>
+<tr><td>Waiting</td><td>Waiting for some <b>event</b> (e.g., I/O completion)</td></tr>
+<tr><td>Ready</td><td>Waiting to be assigned to a <b>processor</b></td></tr><tr><td>Terminated</td><td>Finished execution</td></tr></table></div>
+<div class="diag">
+<svg viewBox="0 0 640 230" width="100%" style="max-width:640px;display:block;margin:auto" font-family="system-ui" font-size="13">
+<defs><marker id="ar" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto"><path d="M0,0 L8,4 L0,8z" fill="#98a2ae"/></marker></defs>
+<g font-weight="700" text-anchor="middle" fill="#e3e7ec">
+<rect x="20" y="20" width="90" height="36" rx="18" fill="#1f3155" stroke="#7ea2ff"/><text x="65" y="43">new</text>
+<rect x="530" y="20" width="100" height="36" rx="18" fill="#43213c" stroke="#e07cc8"/><text x="580" y="43">terminated</text>
+<rect x="150" y="95" width="90" height="36" rx="18" fill="#173a28" stroke="#4cc382"/><text x="195" y="118">ready</text>
+<rect x="400" y="95" width="90" height="36" rx="18" fill="#43331a" stroke="#e6b450"/><text x="445" y="118">running</text>
+<rect x="275" y="180" width="90" height="36" rx="18" fill="#2c2852" stroke="#c39bff"/><text x="320" y="203">waiting</text></g>
+<g stroke="#98a2ae" fill="none" marker-end="url(#ar)" stroke-width="1.5">
+<path d="M90,56 L170,95"/><path d="M240,105 L398,105"/><path d="M400,123 L242,123"/><path d="M480,95 L545,56"/>
+<path d="M450,131 L355,180"/><path d="M285,180 L200,133"/></g>
+<g fill="#c9d1d9" font-size="12"><text x="100" y="85">admitted</text><text x="270" y="98">scheduler dispatch</text><text x="285" y="142">interrupt</text><text x="510" y="85">exit</text><text x="415" y="168">I/O or event wait</text><text x="135" y="168">I/O or event completion</text></g>
+</svg></div>
+<div class="box mis"><div class="bt">❌ Common mistake</div><p>There is <b>no Waiting → Running</b> arrow. When I/O finishes, the process goes <b>Waiting → Ready</b>, then waits to be dispatched.</p></div>
+<div class="box rem"><div class="bt">✅ Remember</div><p>I/O request → <b>waiting</b>. Timer interrupt → <b>ready</b>. Ready = needs only the CPU; Waiting = needs an event.</p></div>
+</div></details>
+
+<details class="topic" id="c3-pcb"><summary><span class="chev">▶</span><span class="tname">Process Control Block (PCB) &amp; Linux task_struct</span></summary><div class="tbody">
+<p class="what">The <b class="k">PCB</b> (also called <b>task control block</b>) holds all the information about one process.</p>
+<div class="tw"><table><tr><th>PCB field</th><th>Contains</th></tr>
+<tr><td>Process state</td><td>running, waiting, …</td></tr>
+<tr><td>Program counter</td><td>location of the <b>next instruction</b> to execute</td></tr>
+<tr><td>CPU registers</td><td>contents of all process-centric registers</td></tr>
+<tr><td>CPU-scheduling info</td><td>priorities, scheduling-queue pointers</td></tr>
+<tr><td>Memory-management info</td><td>memory allocated to the process</td></tr>
+<tr><td>Accounting info</td><td>CPU used, clock time since start, time limits</td></tr>
+<tr><td>I/O status info</td><td>I/O devices allocated, <b>list of open files</b></td></tr></table></div>
+<h4>Threads (preview of Ch 4)</h4>
+<p>If a process has multiple threads, multiple program counters exist → the PCB must store thread details / <b>multiple program counters</b>.</p>
+<h4>Linux: <code>task_struct</code></h4>
+<pre>pid_t pid;                    /* process identifier */
+long state;                   /* state of the process */
+unsigned int time_slice;      /* scheduling information */
+struct task_struct *parent;   /* this process's parent */
+struct list_head children;    /* this process's children */
+struct files_struct *files;   /* list of open files */
+struct mm_struct *mm;         /* address space of this process */</pre>
+</div></details>
+
+<details class="topic" id="c3-sched"><summary><span class="chev">▶</span><span class="tname">Process Scheduling Queues &amp; Context Switch</span></summary><div class="tbody">
+<p class="what">The <b class="k">process scheduler</b> picks which available process runs next on a CPU core. <b>Goal:</b> maximize CPU use, quickly switch processes onto the core.</p>
+<ul>
+<li><b class="k">Ready queue</b> — processes in <b>main memory</b>, ready and waiting to execute.</li>
+<li><b class="k">Wait queues</b> — processes waiting for an event (e.g., I/O).</li>
+<li>Processes <b>migrate</b> among the queues.</li>
+</ul>
+<div class="diag"><div class="flow"><div class="n" style="background:var(--c2)">Ready queue</div><span class="a">→</span><div class="n" style="background:var(--c3)">CPU</div><span class="a">→</span><div class="n">I/O request → I/O wait queue → back to ready<br>time slice expired → back to ready<br>fork child / wait for interrupt → wait → back to ready</div></div></div>
+<h4>Context switch</h4>
+<ol><li>CPU switches to another process.</li><li>Save the state (context) of the old process <b>into its PCB</b>.</li><li>Load the saved state of the new process <b>from its PCB</b>.</li></ol>
+<ul>
+<li>Context-switch time is <b>pure overhead</b> — no useful work is done.</li>
+<li>More complex OS and PCB → <b>longer</b> switch.</li>
+<li>Depends on <b>hardware support</b>: some CPUs have <b>multiple register sets</b> → multiple contexts loaded at once → faster.</li>
+</ul>
+<div class="box rem"><div class="bt">✅ Remember</div><p>Context = what's stored in the PCB. Switching = save old PCB + load new PCB = pure overhead.</p></div>
+</div></details>
+
+<details class="topic" id="c3-create"><summary><span class="chev">▶</span><span class="tname">Process Creation: fork(), exec(), wait()</span></summary><div class="tbody">
+<ul>
+<li>Parent creates children → which create others → <b>tree of processes</b>. Each identified by a <b class="k">pid</b>.</li>
+</ul>
+<div class="tw"><table><tr><th>Option type</th><th>Choices</th></tr>
+<tr><td>Resource sharing</td><td>share <b>all</b> · children share a <b>subset</b> · share <b>none</b></td></tr>
+<tr><td>Execution</td><td>parent and children run <b>concurrently</b> · parent <b>waits</b> until children terminate</td></tr>
+<tr><td>Address space</td><td>child is a <b>duplicate</b> of parent · child has a <b>new program loaded</b></td></tr></table></div>
+<h4>UNIX calls</h4>
+<div class="tw"><table><tr><th>Call</th><th>What it does</th></tr>
+<tr><td><code>fork()</code></td><td>Creates a new process (child = copy of parent). Returns <b>0 in the child</b>, <b>child's pid (&gt;0) in the parent</b>, &lt;0 on error.</td></tr>
+<tr><td><code>exec()</code></td><td>Used after fork() to <b>replace the process's memory</b> with a new program.</td></tr>
+<tr><td><code>wait()</code></td><td>Parent waits for the child to terminate.</td></tr></table></div>
+<div class="diag"><div class="flow"><div class="n" style="background:var(--c1)">parent</div><span class="a">→ fork() →</span><div class="n" style="background:var(--c2)">child: exec() → runs new program → exit()</div><span class="a">… parent: wait() →</span><div class="n" style="background:var(--c1)">parent resumes</div></div></div>
+<div class="box ex"><div class="bt">💡 Example (from slides)</div><pre>pid = fork();
+if (pid &lt; 0)       { /* error */ }
+else if (pid == 0) { execlp("/bin/ls","ls",NULL); }   /* child runs ls */
+else               { wait(NULL); printf("Child Complete"); } /* parent */</pre>
+<p>The child becomes <code>ls</code> (never prints). The parent prints "Child Complete" only <b>after</b> the child ends.</p></div>
+<div class="box exam"><div class="bt">🎯 Exam trick — counting forks</div><p><code>fork(); fork(); fork();</code> → each fork doubles the processes: 1→2→4→<b>8 processes</b> (7 new). Rule: <b>n forks → 2ⁿ processes</b>.</p></div>
+</div></details>
+
+<details class="topic" id="c3-term"><summary><span class="chev">▶</span><span class="tname">Process Termination: zombie, orphan, cascading</span></summary><div class="tbody">
+<ul>
+<li>Process runs its last statement → calls <code>exit()</code> → OS deletes it. Status goes back to the parent via <code>wait()</code>; resources are deallocated.</li>
+<li><code>pid = wait(&amp;status);</code> returns the <b>status</b> and <b>pid of the terminated child</b>.</li>
+<li>Parent may kill a child with <code>abort()</code> because: child <b>exceeded allocated resources</b>; task <b>no longer required</b>; parent is exiting and the OS doesn't allow a child to continue without its parent.</li>
+<li><b class="k">Cascading termination</b> — when a process terminates, <b>all its children, grandchildren…</b> are terminated, <b>initiated by the OS</b> (on OSes that don't allow orphans).</li>
+</ul>
+<div class="tw"><table><tr><th></th><th>Zombie</th><th>Orphan</th></tr>
+<tr><td>Who has ended?</td><td>The <b>child</b></td><td>The <b>parent</b></td></tr>
+<tr><td>Situation</td><td>Child terminated, parent did <b>not</b> (yet) call wait()</td><td>Parent terminated <b>without</b> calling wait()</td></tr></table></div>
+<div class="box rem"><div class="bt">✅ Remember</div><p><b>Zombie</b> = dead child, living parent who isn't waiting. <b>Orphan</b> = living child, dead parent.</p></div>
+</div></details>
+
+<details class="topic" id="c3-android"><summary><span class="chev">▶</span><span class="tname">Android Importance Hierarchy &amp; Chrome Multiprocess</span></summary><div class="tbody">
+<h4>Android importance hierarchy</h4>
+<p>Mobile OSes may kill processes to reclaim memory. From <b>most</b> to <b>least</b> important:</p>
+<div class="diag"><div class="flow"><div class="n" style="background:var(--c2)">1. Foreground</div><span class="a">›</span><div class="n">2. Visible</div><span class="a">›</span><div class="n">3. Service</div><span class="a">›</span><div class="n">4. Background</div><span class="a">›</span><div class="n" style="background:var(--mis-bg)">5. Empty</div></div><div class="cap">Android kills the <b>least important</b> first → Empty, then Background, …</div></div>
+<h4>Chrome browser (multiprocess)</h4>
+<p>Single-process browsers: one bad web site can <b>hang or crash the whole browser</b>. Chrome uses 3 process types:</p>
+<div class="tw"><table><tr><th>Process</th><th>Job</th></tr>
+<tr><td>Browser</td><td>Manages UI, disk and network I/O</td></tr>
+<tr><td>Renderer</td><td>Renders pages (HTML, JavaScript). <b>A new one per website.</b> Runs in a <b>sandbox</b> restricting disk &amp; network I/O → limits security exploits</td></tr>
+<tr><td>Plug-in</td><td>One for each type of plug-in</td></tr></table></div>
+</div></details>
+
+<details class="topic" id="c3-ipc"><summary><span class="chev">▶</span><span class="tname">IPC Basics: Cooperating Processes &amp; the Two Models</span></summary><div class="tbody">
+<ul>
+<li>Processes are <b>independent</b> or <b>cooperating</b>. A <b>cooperating</b> process can affect or be affected by others (including sharing data).</li>
+<li>Why cooperate? <b>Information sharing, computation speedup, modularity, convenience</b>.</li>
+<li>Cooperating processes need <b class="k">IPC</b> (interprocess communication). Two models:</li>
+</ul>
+<div class="tw"><table><tr><th></th><th>Shared memory</th><th>Message passing</th></tr>
+<tr><td>Idea</td><td>A memory area shared by the processes</td><td>Send/receive messages; <b>no shared variables</b></td></tr>
+<tr><td>Who controls</td><td>The <b>user processes</b>, not the OS</td><td>The OS IPC facility: <code>send(message)</code>, <code>receive(message)</code></td></tr>
+<tr><td>Main issue</td><td><b>Synchronizing</b> access to shared memory (Ch 6–7)</td><td>Establishing a link; message size fixed or variable</td></tr></table></div>
+</div></details>
+
+<details class="topic" id="c3-pc"><summary><span class="chev">▶</span><span class="tname">Producer–Consumer, Bounded Buffer &amp; Race Condition</span></summary><div class="tbody">
+<p class="what"><b>Producer</b> makes information that a <b>consumer</b> uses.</p>
+<div class="tw"><table><tr><th>Variation</th><th>Producer</th><th>Consumer</th></tr>
+<tr><td>Unbounded buffer</td><td><b>Never waits</b></td><td>Waits if buffer empty</td></tr>
+<tr><td>Bounded buffer (fixed size)</td><td>Waits if <b>all buffers full</b></td><td>Waits if buffer empty</td></tr></table></div>
+<h4>Shared-memory bounded buffer (in / out solution)</h4>
+<pre>#define BUFFER_SIZE 10
+item buffer[BUFFER_SIZE]; int in = 0, out = 0;
+/* Producer */ while (((in + 1) % BUFFER_SIZE) == out) ;  /* full → wait */
+               buffer[in] = next_produced; in = (in + 1) % BUFFER_SIZE;
+/* Consumer */ while (in == out) ;                         /* empty → wait */
+               next_consumed = buffer[out]; out = (out + 1) % BUFFER_SIZE;</pre>
+<div class="tw"><table><tr><th>Condition</th><th>Formula</th></tr>
+<tr><td>Empty</td><td><code>in == out</code></td></tr><tr><td>Full</td><td><code>(in + 1) % N == out</code></td></tr>
+<tr><td>Items in buffer</td><td><code>(in − out + N) % N</code></td></tr>
+<tr><td>Max items</td><td><b>N − 1</b> (one slot always empty)</td></tr></table></div>
+<h4>Using all N slots → add <code>counter</code></h4>
+<ul><li>counter = number of full buffers, starts at 0. Producer waits while <code>counter == BUFFER_SIZE</code>, then <code>counter++</code>. Consumer waits while <code>counter == 0</code>, then <code>counter--</code>.</li></ul>
+<h4>Race condition</h4>
+<p><code>counter++</code> is really 3 steps: <code>reg1 = counter; reg1 = reg1 + 1; counter = reg1</code> (same for <code>counter--</code> with reg2). If they interleave:</p>
+<div class="tw"><table><tr><th>Step</th><th>Action (counter = 5)</th><th>Result</th></tr>
+<tr><td>S0</td><td>producer reg1 = counter</td><td>reg1 = 5</td></tr><tr><td>S1</td><td>producer reg1 = reg1 + 1</td><td>reg1 = 6</td></tr>
+<tr><td>S2</td><td>consumer reg2 = counter</td><td>reg2 = 5</td></tr><tr><td>S3</td><td>consumer reg2 = reg2 − 1</td><td>reg2 = 4</td></tr>
+<tr><td>S4</td><td>producer counter = reg1</td><td>counter = 6</td></tr><tr><td>S5</td><td>consumer counter = reg2</td><td><b>counter = 4</b> ❌ (should be 5)</td></tr></table></div>
+<div class="box rem"><div class="bt">✅ Remember</div><p>Possible final values: <b>4, 5 or 6</b> — the result depends on the order of execution = <b>race condition</b>. The first (in/out) solution has <b>no race</b> because each variable has only one writer (producer writes <code>in</code>, consumer writes <code>out</code>).</p></div>
+</div></details>
+
+<details class="topic" id="c3-mp"><summary><span class="chev">▶</span><span class="tname">Message Passing: Direct/Indirect, Blocking, Buffering</span></summary><div class="tbody">
+<p class="what">To communicate, P and Q must <b>establish a link</b> and <b>exchange messages</b> via send/receive.</p>
+<h4>Design questions</h4>
+<ul><li>How are links established? Can a link connect more than 2 processes? How many links per pair? Link capacity? Message size fixed/variable? Uni- or bi-directional?</li></ul>
+<h4>Link implementation</h4>
+<div class="grid2"><div class="mini"><b>Physical</b>Shared memory · Hardware bus · Network</div><div class="mini"><b>Logical</b>Direct or indirect · Synchronous or asynchronous · Automatic or explicit buffering</div></div>
+<div class="tw"><table><tr><th></th><th>Direct</th><th>Indirect (mailboxes / ports)</th></tr>
+<tr><td>Naming</td><td>Name each other: <code>send(P, msg)</code>, <code>receive(Q, msg)</code></td><td>Use a mailbox with a unique id: <code>send(A, msg)</code>, <code>receive(A, msg)</code></td></tr>
+<tr><td>Link set up</td><td><b>Automatically</b></td><td>Only if processes <b>share a mailbox</b></td></tr>
+<tr><td>Processes per link</td><td>Exactly <b>one pair</b></td><td><b>Many</b> processes</td></tr>
+<tr><td>Links per pair</td><td>Exactly <b>one</b></td><td><b>Several</b></td></tr>
+<tr><td>Direction</td><td>May be unidirectional, usually bi-directional</td><td>Uni- or bi-directional</td></tr></table></div>
+<p>Mailbox operations: <b>create</b> mailbox, <b>send/receive</b> through it, <b>delete</b> it.</p>
+<div class="box exam"><div class="bt">🎯 Mailbox sharing problem</div><p>P1, P2, P3 share mailbox A; P1 sends, P2 and P3 receive — who gets it? Solutions: (1) allow a link with <b>at most two</b> processes; (2) allow only <b>one process at a time</b> to receive; (3) system selects the receiver <b>arbitrarily</b> and tells the sender who got it.</p></div>
+<h4>Synchronization (blocking)</h4>
+<div class="tw"><table><tr><th></th><th>Blocking = synchronous</th><th>Non-blocking = asynchronous</th></tr>
+<tr><td>Send</td><td>Sender blocked until message is received</td><td>Sender sends and continues</td></tr>
+<tr><td>Receive</td><td>Receiver blocked until a message is available</td><td>Receiver gets a valid message <b>or null</b></td></tr></table></div>
+<p>Both blocking = <b class="k">rendezvous</b>. Producer just calls <code>send(next_produced)</code>; consumer calls <code>receive(next_consumed)</code>.</p>
+<h4>Buffering (queue attached to the link)</h4>
+<div class="tw"><table><tr><th>Capacity</th><th>Sender…</th></tr>
+<tr><td>Zero</td><td>Must wait for receiver (<b>rendezvous</b>)</td></tr>
+<tr><td>Bounded (n messages)</td><td>Waits only if link is <b>full</b></td></tr>
+<tr><td>Unbounded</td><td><b>Never</b> waits</td></tr></table></div>
+</div></details>
+
+<details class="topic" id="c3-ex"><summary><span class="chev">▶</span><span class="tname">IPC Examples: POSIX Shared Memory, Mach, Windows ALPC</span></summary><div class="tbody">
+<h4>POSIX shared memory (order matters!)</h4>
+<ol><li><code>shm_fd = shm_open(name, O_CREAT | O_RDWR, 0666);</code> — create (or open existing) segment</li>
+<li><code>ftruncate(shm_fd, 4096);</code> — set the size</li>
+<li><code>mmap()</code> — map it; read/write through the <b>pointer returned by mmap()</b></li></ol>
+<h4>Mach (message based)</h4>
+<ul><li>Everything is messages — <b>even system calls</b>.</li>
+<li>Each task gets <b>two ports</b> at creation: <b>Kernel</b> and <b>Notify</b>.</li>
+<li>Send/receive with <code>mach_msg()</code>; ports created with <code>mach_port_allocate()</code>.</li>
+<li>If mailbox is full, sender can: <b>wait indefinitely</b> · <b>wait at most n ms</b> · <b>return immediately</b> · <b>temporarily cache</b> a message.</li></ul>
+<h4>Windows — ALPC (advanced local procedure call)</h4>
+<ul><li>Message-passing; <b>only between processes on the same system</b>; uses <b>ports</b> (like mailboxes).</li></ul>
+<div class="diag"><div class="flow"><div class="n">1. Client opens handle to server's <b>connection port</b></div><span class="a">→</span><div class="n">2. Client sends connection request</div><span class="a">→</span><div class="n">3. <b>Server</b> creates <b>two private communication ports</b>, returns one handle to client</div><span class="a">→</span><div class="n">4. Both use their port handles to send messages/callbacks &amp; listen for replies</div></div></div>
+</div></details>
+
+<details class="topic" id="c3-pipes"><summary><span class="chev">▶</span><span class="tname">Pipes: Ordinary vs Named</span></summary><div class="tbody">
+<p class="what">A <b class="k">pipe</b> is a conduit that lets two processes communicate. Design issues: uni- or bidirectional? half- or full-duplex? parent-child relationship needed? usable over a network?</p>
+<div class="tw"><table><tr><th></th><th>Ordinary pipe</th><th>Named pipe</th></tr>
+<tr><td>Direction</td><td><b>Unidirectional</b> (write-end → read-end, producer–consumer style)</td><td><b>Bidirectional</b></td></tr>
+<tr><td>Relationship</td><td>Requires <b>parent–child</b>; can't be accessed outside the creating process</td><td><b>No</b> parent–child needed; several processes can use it</td></tr>
+<tr><td>Windows name</td><td><b>Anonymous pipes</b></td><td>Named pipes</td></tr>
+<tr><td>Availability</td><td>UNIX &amp; Windows</td><td>UNIX &amp; Windows; "more powerful"</td></tr></table></div>
+</div></details>
+
+<details class="topic" id="c3-sock"><summary><span class="chev">▶</span><span class="tname">Client–Server: Sockets &amp; RPC</span></summary><div class="tbody">
+<h4>Sockets</h4>
+<ul>
+<li>A <b class="k">socket</b> = <b>endpoint for communication</b> = <b>IP address + port</b>. Example: <code>161.25.19.8:1625</code> = port 1625 on host 161.25.19.8.</li>
+<li>Communication happens between a <b>pair of sockets</b>.</li>
+<li>Ports <b>below 1024</b> are <b>well known</b> (standard services).</li>
+<li><code>127.0.0.1</code> = <b>loopback</b> (the same machine).</li>
+<li>Java socket types: <b>TCP</b> (connection-oriented), <b>UDP</b> (connectionless), <b>MulticastSocket</b> (send to many recipients). Slide example: a "Date" server and client.</li>
+</ul>
+<h4>Remote Procedure Call (RPC)</h4>
+<p>Makes calling a procedure on another networked machine look like a local call. Uses <b>ports</b> to tell services apart.</p>
+<div class="diag"><div class="flow"><div class="n" style="background:var(--c1)">Client calls procedure</div><span class="a">→</span><div class="n" style="background:var(--c2)"><b>Client stub</b>: locates server, <b>marshalls</b> parameters</div><span class="a">→ message →</span><div class="n" style="background:var(--c3)"><b>Server stub</b>: unpacks parameters, performs procedure</div><span class="a">→</span><div class="n">result returned</div></div></div>
+<ul>
+<li><b class="k">Stub</b> = client-side <b>proxy</b> for the real procedure on the server. On Windows, stubs are compiled from <b>MIDL</b>.</li>
+<li><b class="k">XDR</b> (External Data Representation; slide writes "XDL") handles different architectures: <b>big-endian vs little-endian</b>.</li>
+<li>Remote = more failure cases → messages delivered <b>exactly once</b> rather than at most once.</li>
+<li>OS provides a <b>rendezvous (matchmaker)</b> service to connect client and server.</li>
+</ul>
+<div class="box conf"><div class="bt">🔀 Marshalling vs XDR vs Matchmaker</div><p><b>Marshalling</b> = packing parameters into a message. <b>XDR</b> = neutral data format (endianness). <b>Matchmaker</b> = finds the server's port.</p></div>
+</div></details>
+</section>
+
+<!-- ======================================================= CHAPTER 4 -->
+<section class="chapter" id="ch4" data-ch="Chapter 4 — Threads">
+<div class="chhead"><h2>Chapter 4 — Threads &amp; Concurrency</h2><div class="tools"><button data-exp="ch4">Expand all</button> <button data-col="ch4">Collapse all</button></div></div>
+
+<details class="topic" id="c4-basics"><summary><span class="chev">▶</span><span class="tname">Threads: Motivation &amp; Benefits</span></summary><div class="tbody">
+<h4>What is it?</h4>
+<p class="what">A <b class="k">thread</b> is a unit of execution <b>inside</b> a process. Most modern apps (and kernels) are multithreaded: e.g., one thread updates the display, one fetches data, one spell-checks, one answers network requests.</p>
+<div class="diag"><div class="grid2" style="margin:0">
+<div class="mini"><b>Single-threaded process</b>code · data · files<br>registers · <b>1</b> stack · <b>1</b> PC</div>
+<div class="mini"><b>Multithreaded process</b><u>Shared</u>: code · data · files<br><u>Per thread</u>: registers · stack · PC</div></div></div>
+<ul><li><b>Process creation is heavy-weight; thread creation is light-weight.</b> Threads can simplify code and increase efficiency.</li>
+<li>Multithreaded server: request arrives → server <b>creates a thread</b> to service it → resumes listening.</li></ul>
+<div class="tw"><table><tr><th>Benefit</th><th>Meaning</th><th>Example</th></tr>
+<tr><td>Responsiveness</td><td>Execution continues even if part of the process is blocked — important for UIs</td><td>Editor keeps accepting typing while saving</td></tr>
+<tr><td>Resource sharing</td><td>Threads share the process's resources — easier than shared memory / message passing</td><td>Threads read the same global array</td></tr>
+<tr><td>Economy</td><td>Cheaper than process creation; thread switching cheaper than context switching</td><td>Server creates a thread per request</td></tr>
+<tr><td>Scalability</td><td>Process can use multicore architectures</td><td>4 threads on 4 cores</td></tr></table></div>
+<div class="box conf"><div class="bt">🔀 Process vs Thread</div><p><b>Process</b> = a program in execution with its <b>own</b> address space (code, data, heap, files). <b>Thread</b> = a path of execution <b>inside</b> a process: shares code/data/files, but has its <b>own registers, PC and stack</b>.</p></div>
+</div></details>
+
+<details class="topic" id="c4-multicore"><summary><span class="chev">▶</span><span class="tname">Multicore Programming: Concurrency vs Parallelism</span></summary><div class="tbody">
+<div class="tw"><table><tr><th></th><th>Concurrency</th><th>Parallelism</th></tr>
+<tr><td>Meaning</td><td>More than one task <b>making progress</b></td><td>More than one task running <b>at the same time</b></td></tr>
+<tr><td>Needs multiple cores?</td><td><b>No</b> — on a single core, the scheduler interleaves tasks</td><td><b>Yes</b></td></tr></table></div>
+<div class="diag"><div class="small"><b>Single core (concurrency):</b></div><div class="gantt" data-g="T1:0-1,T2:1-2,T3:2-3,T4:3-4,T1:4-5,T2:5-6,T3:6-7,T4:7-8" data-not></div>
+<div class="small"><b>Two cores (parallelism):</b> core 1: T1 T3 T1 T3 · core 2: T2 T4 T2 T4</div></div>
+<h4>Programming challenges on multicore</h4>
+<div class="tw"><table><tr><th>Challenge</th><th>Simple meaning</th></tr>
+<tr><td>Dividing activities</td><td>Find tasks that can run separately</td></tr>
+<tr><td>Balance</td><td>Tasks should do <b>equal</b> amounts of work</td></tr>
+<tr><td>Data splitting</td><td>Divide the data among cores</td></tr>
+<tr><td>Data dependency</td><td>One task needs another's results → must synchronize</td></tr>
+<tr><td>Testing &amp; debugging</td><td>Many possible execution orders → harder</td></tr></table></div>
+<h4>Types of parallelism</h4>
+<div class="grid2"><div class="mini"><b>Data parallelism</b>Same operation on <b>different subsets of the same data</b> on each core.<br><i>Ex: 4 cores each sum ¼ of an array.</i></div>
+<div class="mini"><b>Task parallelism</b>Each thread does a <b>different operation</b>.<br><i>Ex: one thread computes mean, another max, another std dev.</i></div></div>
+<div class="box rem"><div class="bt">✅ Remember</div><p>You can have <b>concurrency without parallelism</b> (single core), but parallelism always gives concurrency.</p></div>
+</div></details>
+
+<details class="topic" id="c4-amdahl"><summary><span class="chev">▶</span><span class="tname">Amdahl's Law</span></summary><div class="tbody">
+<p class="what">Tells you the <b>maximum speedup</b> from adding cores to an app that has both <b>serial</b> and <b>parallel</b> parts.</p>
+<div class="formula">speedup ≤ 1 / ( S + (1 − S) / N )</div>
+<p><b>S</b> = serial portion (fraction) · <b>N</b> = number of cores. As <b>N → ∞</b>, speedup → <b>1 / S</b>.</p>
+<div class="box ex"><div class="bt">💡 Worked example (slides)</div><p>75% parallel, 25% serial (S = 0.25), N = 2:<br>1 / (0.25 + 0.75/2) = 1 / 0.625 = <b>1.6×</b><br>N = 4: 1 / (0.25 + 0.1875) ≈ <b>2.29×</b> · N = ∞: 1 / 0.25 = <b>4×</b> max.</p></div>
+<div class="box rem"><div class="bt">✅ Remember</div><p>The <b>serial portion</b> has a <b>disproportionate effect</b>: even with infinite cores you can't beat 1/S. (The slides also ask whether the law fits contemporary multicore systems.)</p></div>
+<div class="box mis"><div class="bt">❌ Common mistake</div><p>Using the parallel fraction as S. <b>S is the serial part.</b> Convert % to a decimal first.</p></div>
+</div></details>
+
+<details class="topic" id="c4-models"><summary><span class="chev">▶</span><span class="tname">User vs Kernel Threads &amp; Multithreading Models</span></summary><div class="tbody">
+<div class="tw"><table><tr><th></th><th>User threads</th><th>Kernel threads</th></tr>
+<tr><td>Managed by</td><td>A <b>user-level thread library</b></td><td>The <b>kernel</b></td></tr>
+<tr><td>Examples</td><td>POSIX Pthreads, Windows threads, Java threads</td><td>Virtually all general-purpose OSes: Windows, Linux, Mac OS X, iOS, Android</td></tr></table></div>
+<h4>Mapping models</h4>
+<div class="diag">
+<svg viewBox="0 0 700 150" width="100%" style="max-width:700px;display:block;margin:auto" font-family="system-ui" font-size="12">
+<g font-weight="700" text-anchor="middle" fill="#c9d1d9"><text x="85" y="14">Many-to-One</text><text x="260" y="14">One-to-One</text><text x="440" y="14">Many-to-Many</text><text x="615" y="14">Two-level</text></g>
+<g fill="#1f3155" stroke="#7ea2ff">
+<circle cx="45" cy="40" r="10"/><circle cx="85" cy="40" r="10"/><circle cx="125" cy="40" r="10"/>
+<circle cx="220" cy="40" r="10"/><circle cx="260" cy="40" r="10"/><circle cx="300" cy="40" r="10"/>
+<circle cx="400" cy="40" r="10"/><circle cx="440" cy="40" r="10"/><circle cx="480" cy="40" r="10"/>
+<circle cx="575" cy="40" r="10"/><circle cx="615" cy="40" r="10"/><circle cx="655" cy="40" r="10"/></g>
+<g fill="#43331a" stroke="#e6b450">
+<rect x="73" y="100" width="24" height="22" rx="4"/>
+<rect x="208" y="100" width="24" height="22" rx="4"/><rect x="248" y="100" width="24" height="22" rx="4"/><rect x="288" y="100" width="24" height="22" rx="4"/>
+<rect x="408" y="100" width="24" height="22" rx="4"/><rect x="448" y="100" width="24" height="22" rx="4"/>
+<rect x="583" y="100" width="24" height="22" rx="4"/><rect x="643" y="100" width="24" height="22" rx="4"/></g>
+<g stroke="#98a2ae" stroke-width="1.3">
+<line x1="45" y1="50" x2="85" y2="100"/><line x1="85" y1="50" x2="85" y2="100"/><line x1="125" y1="50" x2="85" y2="100"/>
+<line x1="220" y1="50" x2="220" y2="100"/><line x1="260" y1="50" x2="260" y2="100"/><line x1="300" y1="50" x2="300" y2="100"/>
+<line x1="400" y1="50" x2="420" y2="100"/><line x1="440" y1="50" x2="420" y2="100"/><line x1="440" y1="50" x2="460" y2="100"/><line x1="480" y1="50" x2="460" y2="100"/>
+<line x1="575" y1="50" x2="595" y2="100"/><line x1="615" y1="50" x2="595" y2="100"/><line x1="655" y1="50" x2="655" y2="100" stroke="#ff7b72" stroke-width="2.4"/></g>
+<g fill="#98a2ae" font-size="11"><text x="10" y="145">● user thread   ▭ kernel thread   red = bound thread</text></g>
+</svg></div>
+<div class="tw"><table><tr><th>Model</th><th>How</th><th>Pros / Cons</th><th>Examples</th></tr>
+<tr><td>Many-to-One</td><td>Many user threads → <b>1</b> kernel thread</td><td>❌ One thread <b>blocks → all block</b>. ❌ <b>No parallelism</b> on multicore (only one can be in the kernel at a time). Few systems use it.</td><td>Solaris Green Threads, GNU Portable Threads</td></tr>
+<tr><td>One-to-One</td><td>Each user thread → its <b>own</b> kernel thread</td><td>✅ More concurrency, parallelism. ❌ Creating a user thread creates a kernel thread → <b>overhead</b> → number of threads sometimes <b>restricted</b>.</td><td>Windows, Linux</td></tr>
+<tr><td>Many-to-Many</td><td>Many user threads → many kernel threads</td><td>✅ OS creates a <b>sufficient number</b> of kernel threads. Not very common.</td><td>Windows ThreadFiber package</td></tr>
+<tr><td>Two-level</td><td>Like M:M <b>plus</b> a user thread can be <b>bound</b> to a kernel thread</td><td>Flexible</td><td>—</td></tr></table></div>
+<div class="box ex"><div class="bt">💡 Example</div><p>4 user threads on a quad-core must run truly in parallel → <b>not</b> possible with many-to-one.</p></div>
+</div></details>
+
+<details class="topic" id="c4-libs"><summary><span class="chev">▶</span><span class="tname">Thread Libraries &amp; Pthreads</span></summary><div class="tbody">
+<ul>
+<li>A <b class="k">thread library</b> gives the programmer an API to create and manage threads. Implemented either <b>entirely in user space</b> or as a <b>kernel-level library supported by the OS</b>.</li>
+<li><b class="k">Pthreads</b> = POSIX standard (<b>IEEE 1003.1c</b>) API for thread creation and synchronization.</li>
+<li>It is a <b>specification, not an implementation</b>: the API defines behaviour; library developers decide the implementation. May be user-level or kernel-level. Common in UNIX (Linux, Mac OS X).</li>
+</ul>
+<pre>pthread_attr_init(&amp;attr);                      /* default attributes   */
+pthread_create(&amp;tid, &amp;attr, runner, argv[1]);  /* create thread        */
+pthread_join(tid, NULL);                       /* wait for it to end   */
+pthread_exit(0);                               /* thread ends itself   */
+/* joining 10 threads: for (i=0;i&lt;10;i++) pthread_join(workers[i], NULL); */</pre>
+<div class="box mis"><div class="bt">❌ Common mistake</div><p>"Pthreads is Linux's thread implementation." No — it is a <b>specification</b>.</p></div>
+</div></details>
+
+<details class="topic" id="c4-implicit"><summary><span class="chev">▶</span><span class="tname">Implicit Threading: Thread Pools, Fork-Join, OpenMP</span></summary><div class="tbody">
+<p class="what"><b class="k">Implicit threading</b> = threads are created and managed by <b>compilers and run-time libraries</b>, not by the programmer. Popular because correctness gets harder as thread counts grow.</p>
+<h4>Thread pools</h4>
+<p>Create a number of threads in a <b>pool</b> where they wait for work.</p>
+<ol><li>Usually <b>slightly faster</b> to service a request with an existing thread than create a new one.</li>
+<li>Allows the number of threads to be <b>bound to the size of the pool</b> (prevents running out of resources).</li>
+<li>Separates the <b>task</b> from the <b>mechanics of creating</b> it → different strategies, e.g., run tasks <b>periodically</b>.</li></ol>
+<p>The Windows API supports thread pools.</p>
+<h4>Fork-Join</h4>
+<p>Multiple tasks are <b>forked</b>, then <b>joined</b>.</p>
+<pre>Task(problem):
+  if problem is small enough → solve it directly
+  else: subtask1 = fork(new Task(subset of problem))
+        subtask2 = fork(new Task(subset of problem))
+        result1 = join(subtask1); result2 = join(subtask2)
+        return combined results</pre>
+<p>Java: <code>ForkJoinTask</code> is an abstract base class; <code>RecursiveTask</code> <b>returns a result</b> (from <code>compute()</code>); <code>RecursiveAction</code> does <b>not</b>.</p>
+<h4>OpenMP</h4>
+<ul><li>Compiler directives + API for <b>C, C++, FORTRAN</b>; for <b>shared-memory</b> environments.</li>
+<li>Identifies <b>parallel regions</b>. <code>#pragma omp parallel</code> → creates <b>as many threads as there are cores</b>.</li>
+<li><code>#pragma omp parallel for</code> → runs a for loop in parallel.</li></ul>
+</div></details>
+
+<details class="topic" id="c4-issues"><summary><span class="chev">▶</span><span class="tname">Threading Issues: fork()/exec() &amp; Signals</span></summary><div class="tbody">
+<h4>fork() and exec() in a multithreaded process</h4>
+<ul><li>Does <code>fork()</code> copy <b>only the calling thread</b> or <b>all threads</b>? Some UNIXes have <b>two versions</b> of fork.</li>
+<li><code>exec()</code> works as normal: <b>replaces the entire process, including all threads</b>.</li></ul>
+<div class="box rem"><div class="bt">✅ Remember</div><p>If <code>exec()</code> is called right after fork, copying all threads is wasted → duplicating only the calling thread is enough.</p></div>
+<h4>Signal handling</h4>
+<ul><li><b class="k">Signals</b> (UNIX) notify a process that an event happened.</li>
+<li>Steps: signal <b>generated</b> by an event → <b>delivered</b> to a process → <b>handled</b>.</li>
+<li>Two handlers: <b>default</b> (every signal has one; the kernel runs it) or <b>user-defined</b> (overrides default).</li>
+<li>Single-threaded: delivered to the process. <b>Multithreaded — 4 options:</b>
+<ol><li>To the <b>thread to which the signal applies</b></li><li>To <b>every</b> thread</li><li>To <b>certain</b> threads</li><li>Assign <b>one specific thread</b> to receive all signals</li></ol></li></ul>
+<div class="box ex"><div class="bt">💡 Example</div><p>Thread T2 makes an illegal memory access (synchronous signal) → deliver to <b>T2</b>.</p></div>
+</div></details>
+
+<details class="topic" id="c4-cancel"><summary><span class="chev">▶</span><span class="tname">Thread Cancellation</span></summary><div class="tbody">
+<p class="what">Terminating a thread before it finishes. The thread to cancel = <b class="k">target thread</b>.</p>
+<div class="tw"><table><tr><th></th><th>Asynchronous</th><th>Deferred</th></tr>
+<tr><td>How</td><td>Target terminated <b>immediately</b></td><td>Target <b>periodically checks</b> if it should cancel</td></tr>
+<tr><td>Safety</td><td>Risky (may stop mid-update of shared data)</td><td>Safer — cancels only at a <b>cancellation point</b></td></tr>
+<tr><td>Default?</td><td></td><td>✅ <b>Default type</b></td></tr></table></div>
+<ul><li>Invoking cancel only <b>requests</b> it; actual cancellation depends on thread state.</li>
+<li>If cancellation is <b>disabled</b>, the request <b>remains pending</b> until enabled.</li>
+<li>Cancellation point e.g. <code>pthread_testcancel()</code> → then the <b>cleanup handler</b> runs.</li>
+<li>On <b>Linux</b>, cancellation is handled through <b>signals</b>.</li>
+<li><b>Java</b>: deferred cancellation with <code>interrupt()</code> → sets the interrupted status; the thread checks it.</li></ul>
+</div></details>
+
+<details class="topic" id="c4-tls"><summary><span class="chev">▶</span><span class="tname">Thread-Local Storage &amp; Scheduler Activations</span></summary><div class="tbody">
+<h4>Thread-Local Storage (TLS)</h4>
+<ul><li>Each thread gets <b>its own copy</b> of data.</li>
+<li>Useful when you <b>don't control thread creation</b> (e.g., <b>thread pool</b>).</li>
+<li>Different from local variables: locals live only <b>during one function call</b>; TLS is visible <b>across function calls</b>.</li>
+<li>Similar to <b>static</b> data, but <b>unique to each thread</b>.</li></ul>
+<div class="box conf"><div class="bt">🔀 Global vs Local vs TLS</div><p>Global = one copy shared by all threads. Local = one copy per function call. TLS = one copy per thread, lasting across calls.</p></div>
+<h4>Scheduler activations</h4>
+<ul><li>M:M and two-level models need communication to keep the right number of kernel threads.</li>
+<li>They use an intermediate structure: the <b class="k">lightweight process (LWP)</b> — looks like a <b>virtual processor</b> on which user threads are scheduled; each LWP is attached to a <b>kernel thread</b>.</li>
+<li><b class="k">Upcall</b> = communication <b>from the kernel to the upcall handler in the thread library</b>. This lets the app keep the correct number of kernel threads.</li></ul>
+<div class="diag"><div class="flow"><div class="n" style="background:var(--c1)">user thread</div><span class="a">→</span><div class="n" style="background:var(--c2)">LWP (virtual processor)</div><span class="a">→</span><div class="n" style="background:var(--c3)">kernel thread</div><span class="a">… kernel → upcall → thread library</span></div></div>
+</div></details>
+
+<details class="topic" id="c4-os"><summary><span class="chev">▶</span><span class="tname">OS Examples: Windows &amp; Linux Threads</span></summary><div class="tbody">
+<h4>Windows threads</h4>
+<ul><li>Windows API; <b>one-to-one</b>, kernel-level.</li>
+<li>Each thread has: thread id, <b>register set</b>, separate <b>user and kernel stacks</b>, <b>private data storage area</b> (used by run-time libraries and DLLs).</li>
+<li><b>Context</b> of the thread = register set + stacks + private storage area.</li></ul>
+<div class="tw"><table><tr><th>Structure</th><th>Contains</th><th>Space</th></tr>
+<tr><td>ETHREAD (executive thread block)</td><td>Pointer to the process + pointer to KTHREAD</td><td>Kernel</td></tr>
+<tr><td>KTHREAD (kernel thread block)</td><td>Scheduling &amp; sync info, kernel-mode stack, pointer to TEB</td><td>Kernel</td></tr>
+<tr><td>TEB (thread environment block)</td><td>Thread id, user-mode stack, <b>thread-local storage</b></td><td><b>User</b></td></tr></table></div>
+<h4>Linux threads</h4>
+<ul><li>Linux calls them <b class="k">tasks</b>, not threads.</li>
+<li>Created with the <code>clone()</code> system call; <b>flags</b> control what is shared (e.g., the parent's <b>address space</b>).</li>
+<li><code>struct task_struct</code> points to process data structures (shared or unique).</li></ul>
+</div></details>
+</section>
+
+<!-- ======================================================= CHAPTER 5 -->
+<section class="chapter" id="ch5" data-ch="Chapter 5 — CPU Scheduling">
+<div class="chhead"><h2>Chapter 5 — CPU Scheduling</h2><div class="tools"><button data-exp="ch5">Expand all</button> <button data-col="ch5">Collapse all</button></div></div>
+
+<details class="topic" id="c5-basic"><summary><span class="chev">▶</span><span class="tname">Basic Concepts: Burst Cycle, Scheduler, Preemption, Dispatcher</span></summary><div class="tbody">
+<ul>
+<li>Max CPU utilization comes from <b>multiprogramming</b>.</li>
+<li><b class="k">CPU–I/O burst cycle</b>: a process alternates <b>CPU bursts</b> and <b>I/O bursts</b> (waits).</li>
+<li>Histogram: <b>many short</b> CPU bursts, <b>few long</b> ones. CPU-burst distribution is the main concern.</li>
+<li><b class="k">CPU scheduler</b>: picks a process from the <b>ready queue</b> and gives it a CPU core.</li>
+</ul>
+<div class="box conf"><div class="bt">🔀 CPU-bound vs I/O-bound</div><p><b>CPU-bound</b> = long CPU bursts, little I/O (e.g., video encoding). <b>I/O-bound</b> = many short CPU bursts with lots of I/O waiting (e.g., a text editor). In FCFS, I/O-bound jobs stuck behind a CPU-bound job = <b>convoy effect</b>.</p></div>
+<h4>When does scheduling happen?</h4>
+<div class="tw"><table><tr><th>#</th><th>Process…</th><th>Choice?</th></tr>
+<tr><td>1</td><td>Running → Waiting (e.g., I/O request)</td><td>No choice — must pick new</td></tr>
+<tr><td>2</td><td>Running → Ready (e.g., interrupt)</td><td><b>Choice</b></td></tr>
+<tr><td>3</td><td>Waiting → Ready (e.g., I/O done)</td><td><b>Choice</b></td></tr>
+<tr><td>4</td><td>Terminates</td><td>No choice — must pick new</td></tr></table></div>
+<div class="tw"><table><tr><th></th><th>Non-preemptive</th><th>Preemptive</th></tr>
+<tr><td>When scheduling happens</td><td>Only in cases <b>1 and 4</b></td><td>Also in cases 2 and 3</td></tr>
+<tr><td>Behaviour</td><td>Process keeps the CPU until it <b>terminates or waits</b></td><td>OS can take the CPU away</td></tr>
+<tr><td>Used by</td><td>—</td><td>Virtually all modern OSes: Windows, MacOS, Linux, UNIX</td></tr>
+<tr><td>Risk</td><td>—</td><td><b>Race conditions</b> on shared data (preempted mid-update; another process reads inconsistent data)</td></tr></table></div>
+<h4>Dispatcher</h4>
+<p>Gives the CPU to the process the scheduler chose: <b>(1) switch context, (2) switch to user mode, (3) jump to the right place in the user program</b>.</p>
+<p><b class="k">Dispatch latency</b> = time for the dispatcher to <b>stop one process and start another</b>.</p>
+<div class="box conf"><div class="bt">🔀 Scheduler vs Dispatcher</div><p>Scheduler <b>decides</b> who runs. Dispatcher <b>does the switch</b>.</p></div>
+</div></details>
+
+<details class="topic" id="c5-criteria"><summary><span class="chev">▶</span><span class="tname">Scheduling Criteria &amp; Formulas</span></summary><div class="tbody">
+<div class="tw"><table><tr><th>Criterion</th><th>Meaning</th><th>Goal</th></tr>
+<tr><td>CPU utilization</td><td>Keep the CPU as busy as possible</td><td>Max</td></tr>
+<tr><td>Throughput</td><td># processes that <b>complete</b> per time unit</td><td>Max</td></tr>
+<tr><td>Turnaround time</td><td>Time to execute a process (submission → completion)</td><td>Min</td></tr>
+<tr><td>Waiting time</td><td>Time spent <b>waiting in the ready queue</b></td><td>Min</td></tr>
+<tr><td>Response time</td><td>Time from request submission until the <b>first response</b></td><td>Min</td></tr></table></div>
+<div class="formula" style="font-size:1rem;line-height:1.9">
+Turnaround (TAT) = Completion − Arrival<br>
+Waiting (WT) = Turnaround − Burst<br>
+Response (RT) = First time on CPU − Arrival<br>
+Throughput = processes completed ÷ time</div>
+<div class="box exam"><div class="bt">🎯 How to solve any scheduling problem</div><ol>
+<li>Write the table: process, arrival, burst (and priority if given).</li>
+<li>Draw the <b>Gantt chart</b> step by step. At each decision point, list who is in the ready queue.</li>
+<li>Read <b>completion</b> times off the chart.</li>
+<li>TAT = completion − arrival → WT = TAT − burst → RT = first start − arrival.</li>
+<li>Average = sum ÷ number of processes. Double-check: the chart ends at Σ bursts (if the CPU is never idle).</li></ol></div>
+</div></details>
+
+<details class="topic" id="c5-fcfs"><summary><span class="chev">▶</span><span class="tname">First-Come, First-Served (FCFS)</span></summary><div class="tbody">
+<p class="what">Run processes in <b>arrival order</b>. <b>Non-preemptive.</b></p>
+<div class="box ex"><div class="bt">💡 Slide example — bursts P1 = 24, P2 = 3, P3 = 3</div>
+<p><b>Order P1, P2, P3:</b></p><div class="gantt" data-g="P1:0-24,P2:24-27,P3:27-30"></div>
+<p>WT: P1 = 0, P2 = 24, P3 = 27 → average = 51/3 = <b>17</b></p>
+<p><b>Order P2, P3, P1:</b></p><div class="gantt" data-g="P2:0-3,P3:3-6,P1:6-30"></div>
+<p>WT: P1 = 6, P2 = 0, P3 = 3 → average = 9/3 = <b>3</b> — much better!</p></div>
+<div class="box rem"><div class="bt">✅ Remember</div><p><b class="k">Convoy effect</b> — short processes stuck <b>behind a long process</b> (e.g., one CPU-bound and many I/O-bound processes). FCFS result depends heavily on arrival order.</p></div>
+</div></details>
+
+<details class="topic" id="c5-sjf"><summary><span class="chev">▶</span><span class="tname">Shortest-Job-First (SJF) &amp; Shortest-Remaining-Time-First (SRTF)</span></summary><div class="tbody">
+<p class="what">Give the CPU to the process with the <b>shortest next CPU burst</b>.</p>
+<ul><li>SJF is <b>optimal</b>: gives the <b>minimum average waiting time</b> for a given set of processes.</li>
+<li>Problem: we don't know the next burst length → <b>ask the user</b> or <b>estimate</b> it.</li>
+<li>Preemptive version = <b class="k">SRTF</b> (shortest-remaining-time-first): whenever a new process <b>arrives</b>, re-decide using remaining times.</li></ul>
+<div class="box ex"><div class="bt">💡 SJF example — all arrive at 0: P1 = 6, P2 = 8, P3 = 7, P4 = 3</div>
+<div class="gantt" data-g="P4:0-3,P1:3-9,P3:9-16,P2:16-24"></div>
+<p>WT: P1 = 3, P2 = 16, P3 = 9, P4 = 0 → (3+16+9+0)/4 = <b>7</b></p></div>
+<div class="box ex"><div class="bt">💡 SRTF example — (arrival, burst): P1 (0,8), P2 (1,4), P3 (2,9), P4 (3,5)</div>
+<div class="gantt" data-g="P1:0-1,P2:1-5,P4:5-10,P1:10-17,P3:17-26"></div>
+<ul><li>t=1: P2 (4) &lt; P1 remaining (7) → <b>preempt</b> P1.</li><li>t=5: P2 done; shortest remaining: P4 (5), then P1 (7), then P3 (9).</li></ul>
+<p>WT = completion − arrival − burst: P1 = 17−0−8 = 9, P2 = 5−1−4 = 0, P3 = 26−2−9 = 15, P4 = 10−3−5 = 2<br>Average = 26/4 = <b>6.5</b> (non-preemptive SJF on the same data gives 7.75)</p></div>
+<div class="box mis"><div class="bt">❌ Common mistake</div><p>In non-preemptive SJF with arrival times, only choose among processes that have <b>already arrived</b> when the CPU becomes free.</p></div>
+</div></details>
+
+<details class="topic" id="c5-exp"><summary><span class="chev">▶</span><span class="tname">Predicting the Next CPU Burst (Exponential Averaging)</span></summary><div class="tbody">
+<p class="what">We can only <b>estimate</b> the next burst — assume it's similar to previous ones — then pick the process with the shortest <b>predicted</b> burst.</p>
+<div class="formula">τ<sub>n+1</sub> = α · t<sub>n</sub> + (1 − α) · τ<sub>n</sub></div>
+<ul><li><b>t<sub>n</sub></b> = actual length of the n-th burst · <b>τ<sub>n+1</sub></b> = predicted next burst · 0 ≤ α ≤ 1, commonly <b>α = ½</b>.</li>
+<li><b>α = 0</b> → τ<sub>n+1</sub> = τ<sub>n</sub>: recent history <b>doesn't count</b>.</li>
+<li><b>α = 1</b> → τ<sub>n+1</sub> = t<sub>n</sub>: <b>only the last actual burst</b> counts.</li>
+<li>Expanded: τ<sub>n+1</sub> = αt<sub>n</sub> + (1−α)αt<sub>n−1</sub> + … + (1−α)<sup>j</sup>αt<sub>n−j</sub> + … + (1−α)<sup>n+1</sup>τ<sub>0</sub> → <b>older bursts get less and less weight</b>.</li></ul>
+<div class="box ex"><div class="bt">💡 Example (slide figure): α = ½, τ<sub>0</sub> = 10</div>
+<div class="tw"><table><tr><th>Actual burst t<sub>i</sub></th><td>6</td><td>4</td><td>6</td><td>4</td><td>13</td><td>13</td><td>13</td></tr>
+<tr><th>Guess τ<sub>i</sub></th><td>10</td><td>8</td><td>6</td><td>6</td><td>5</td><td>9</td><td>11</td></tr></table></div>
+<p>τ<sub>1</sub> = ½·6 + ½·10 = 8 · τ<sub>2</sub> = ½·4 + ½·8 = 6 · τ<sub>3</sub> = ½·6 + ½·6 = 6 · τ<sub>4</sub> = ½·4 + ½·6 = 5 · next = ½·13 + ½·5 = 9 …</p></div>
+<div class="box rem"><div class="bt">✅ Remember</div><p>SJF is a kind of <b>priority scheduling</b> where priority = <b>inverse of predicted next burst</b>.</p></div>
+</div></details>
+
+<details class="topic" id="c5-rr"><summary><span class="chev">▶</span><span class="tname">Round Robin (RR)</span></summary><div class="tbody">
+<p class="what">Each process gets a small unit of CPU time = <b class="k">time quantum q</b> (usually <b>10–100 ms</b>). When q runs out, the process is <b>preempted</b> and put at the <b>end of the ready queue</b>. A <b>timer interrupt</b> fires every quantum.</p>
+<ul><li>n processes, quantum q → each gets <b>1/n</b> of the CPU in chunks of at most q. <b>No process waits more than (n − 1)·q</b>.</li>
+<li><b>q large → behaves like FIFO (FCFS)</b>. <b>q small → too much context-switch overhead</b> — q must be large compared to context-switch time (context switch &lt; 10 µs).</li>
+<li>Rule of thumb: <b>80% of CPU bursts should be shorter than q</b>.</li>
+<li>Typically <b>higher average turnaround than SJF</b>, but <b>better response</b>.</li></ul>
+<div class="box ex"><div class="bt">💡 Slide example — q = 4, P1 = 24, P2 = 3, P3 = 3 (all at 0)</div>
+<div class="gantt" data-g="P1:0-4,P2:4-7,P3:7-10,P1:10-14,P1:14-18,P1:18-22,P1:22-26,P1:26-30"></div>
+<p>WT: P1 = 30−24 = 6, P2 = 7−3 = 4, P3 = 10−3 = 7 → avg = 17/3 ≈ <b>5.67</b> (FCFS was 17)<br>RT: 0, 4, 7 → avg ≈ <b>3.67</b></p></div>
+<div class="box ex"><div class="bt">💡 Quantum vs context switches (process of 10 time units)</div>
+<div class="tw"><table><tr><th>q</th><td>12</td><td>6</td><td>1</td></tr><tr><th>Context switches</th><td>0</td><td>1</td><td>9</td></tr></table></div></div>
+<div class="box mis"><div class="bt">❌ Common mistake</div><p>With arrival times, a process that <b>arrives</b> at the same moment another is <b>preempted</b> — usually the new arrival joins the queue first. Track the queue after every slice.</p></div>
+</div></details>
+
+<details class="topic" id="c5-prio"><summary><span class="chev">▶</span><span class="tname">Priority Scheduling (+ Priority with RR)</span></summary><div class="tbody">
+<ul><li>Each process has a <b>priority number</b>; CPU goes to the <b>highest priority</b> (<b>smallest integer = highest priority</b>).</li>
+<li>Can be <b>preemptive</b> or <b>non-preemptive</b>.</li>
+<li>Problem: <b class="k">starvation</b> — low-priority processes may never run. Solution: <b class="k">aging</b> — increase priority as time passes.</li></ul>
+<div class="box ex"><div class="bt">💡 Slide example (all arrive at 0)</div>
+<div class="tw"><table><tr><th>Process</th><td>P1</td><td>P2</td><td>P3</td><td>P4</td><td>P5</td></tr><tr><th>Burst</th><td>10</td><td>1</td><td>2</td><td>1</td><td>5</td></tr><tr><th>Priority</th><td>3</td><td>1</td><td>4</td><td>5</td><td>2</td></tr></table></div>
+<div class="gantt" data-g="P2:0-1,P5:1-6,P1:6-16,P3:16-18,P4:18-19"></div>
+<p>WT: P2 0, P5 1, P1 6, P3 16, P4 18 → 41/5 = <b>8.2</b></p></div>
+<h4>Priority + Round Robin</h4>
+<p>Run the highest priority; processes with the <b>same priority run round-robin</b>.</p>
+<div class="box ex"><div class="bt">💡 Slide example, q = 2</div>
+<div class="tw"><table><tr><th>Process</th><td>P1</td><td>P2</td><td>P3</td><td>P4</td><td>P5</td></tr><tr><th>Burst</th><td>4</td><td>5</td><td>8</td><td>7</td><td>3</td></tr><tr><th>Priority</th><td>3</td><td>2</td><td>2</td><td>1</td><td>3</td></tr></table></div>
+<div class="gantt" data-g="P4:0-7,P2:7-9,P3:9-11,P2:11-13,P3:13-15,P2:15-16,P3:16-20,P1:20-22,P5:22-24,P1:24-26,P5:26-27"></div>
+<p>P4 alone at priority 1 runs fully. Then P2/P3 alternate. Then P1/P5 alternate. WT (= completion − burst): P1 22, P2 11, P3 12, P4 0, P5 24 → 69/5 = <b>13.8</b></p></div>
+</div></details>
+
+<details class="topic" id="c5-mlq"><summary><span class="chev">▶</span><span class="tname">Multilevel Queue &amp; Multilevel Feedback Queue</span></summary><div class="tbody">
+<div class="tw"><table><tr><th></th><th>Multilevel queue (MLQ)</th><th>Multilevel feedback queue (MLFQ)</th></tr>
+<tr><td>Idea</td><td>Ready queue split into several queues (e.g., one per priority, or by process type)</td><td>Same, but a process <b>can move between queues</b></td></tr>
+<tr><td>Parameters</td><td># queues · algorithm per queue · which queue a process enters · scheduling <b>among</b> queues</td><td># queues · algorithm per queue · when to <b>upgrade</b> · when to <b>demote</b> · which queue a process enters</td></tr>
+<tr><td>Aging?</td><td>—</td><td><b>Aging can be implemented</b> with MLFQ</td></tr></table></div>
+<p>With priority: schedule from the <b>highest-priority non-empty queue</b>. Example by process type (high → low): real-time, system, interactive, batch.</p>
+<div class="box ex"><div class="bt">💡 Slide MLFQ example</div>
+<div class="stack" style="max-width:360px"><div style="background:var(--c2)">Q0 — RR, q = 8 ms (new processes enter here)</div><div style="background:var(--c3)">Q1 — RR, q = 16 ms</div><div style="background:var(--c4)">Q2 — FCFS</div></div>
+<p>A job gets 8 ms in Q0; if not done → moved to Q1, gets 16 more ms; if still not done → preempted and moved to Q2.<br><b>Burst 30 ms</b> → 8 (Q0) + 16 (Q1) + <b>6 (Q2)</b>. <b>Burst 20 ms</b> → 8 + 12 → finishes in <b>Q1</b>.</p></div>
+<div class="box rem"><div class="bt">✅ Remember</div><p>MLFQ favours short/interactive jobs (finish in Q0) and pushes long CPU-bound jobs down.</p></div>
+</div></details>
+
+<details class="topic" id="c5-thread"><summary><span class="chev">▶</span><span class="tname">Thread Scheduling: PCS vs SCS</span></summary><div class="tbody">
+<p>When threads are supported, <b>threads</b> are scheduled, not processes.</p>
+<div class="tw"><table><tr><th></th><th>Process-contention scope (PCS)</th><th>System-contention scope (SCS)</th></tr>
+<tr><td>Who competes</td><td>Threads <b>within the same process</b></td><td><b>All threads in the system</b></td></tr>
+<tr><td>Who schedules</td><td>Thread library puts user threads on an <b>LWP</b> (many-to-one, many-to-many)</td><td>Kernel puts kernel threads on a CPU</td></tr>
+<tr><td>Pthreads constant</td><td><code>PTHREAD_SCOPE_PROCESS</code></td><td><code>PTHREAD_SCOPE_SYSTEM</code></td></tr></table></div>
+<ul><li>PCS typically uses priority set by the programmer.</li>
+<li>Set during thread creation: <code>pthread_attr_getscope()</code> / <code>pthread_attr_setscope()</code>.</li>
+<li><b>Linux and macOS only allow PTHREAD_SCOPE_SYSTEM.</b></li></ul>
+</div></details>
+
+<details class="topic" id="c5-mp"><summary><span class="chev">▶</span><span class="tname">Multiple-Processor Scheduling</span></summary><div class="tbody">
+<p>Architectures: multicore CPUs · multithreaded cores · NUMA systems · heterogeneous multiprocessing.</p>
+<ul><li><b class="k">SMP</b> (symmetric multiprocessing): <b>each processor is self-scheduling</b>. Either (a) a <b>common ready queue</b> or (b) a <b>private queue per processor</b>.</li>
+<li><b>Multicore</b>: several cores on one chip — faster, less power.</li>
+<li><b>Multithreaded cores</b>: when one hardware thread has a <b>memory stall</b>, the core switches to another thread.</li>
+<li><b class="k">Chip multithreading (CMT)</b> / Intel <b>hyperthreading</b>: logical CPUs = <b>cores × hardware threads</b> (quad-core × 2 = <b>8</b> logical processors).</li>
+<li><b>Two levels of scheduling</b>: (1) OS picks which software thread runs on a logical CPU; (2) each core picks which hardware thread runs.</li></ul>
+<h4>Load balancing vs processor affinity</h4>
+<div class="tw"><table><tr><th>Term</th><th>Meaning</th></tr>
+<tr><td>Load balancing</td><td>Keep work evenly spread across CPUs (needed in SMP)</td></tr>
+<tr><td>Push migration</td><td>A <b>periodic task</b> checks loads and <b>pushes</b> tasks from overloaded CPUs</td></tr>
+<tr><td>Pull migration</td><td>An <b>idle</b> CPU <b>pulls</b> a waiting task from a busy one</td></tr>
+<tr><td>Processor affinity</td><td>A thread's data sits in its CPU's <b>cache</b> → it "prefers" that CPU</td></tr>
+<tr><td>Soft affinity</td><td>OS <b>tries</b> to keep the thread on the same CPU, no guarantee</td></tr>
+<tr><td>Hard affinity</td><td>Process <b>specifies the set of CPUs</b> it may run on</td></tr>
+<tr><td>NUMA-aware</td><td>OS assigns memory <b>closest to the CPU</b> the thread runs on</td></tr></table></div>
+<div class="box conf"><div class="bt">🔀 The conflict</div><p>Load balancing <b>moves</b> threads → the thread loses its cache contents → breaks affinity.</p></div>
+</div></details>
+
+<details class="topic" id="c5-rt"><summary><span class="chev">▶</span><span class="tname">Real-Time Scheduling: RM, EDF, Proportional Share, POSIX</span></summary><div class="tbody">
+<div class="tw"><table><tr><th>Soft real-time</th><th>Hard real-time</th></tr>
+<tr><td style="font-weight:400">Critical tasks get highest priority, but <b>no guarantee</b> when they run</td><td style="font-weight:400">Task <b>must</b> be serviced by its <b>deadline</b></td></tr></table></div>
+<h4>Latencies</h4>
+<ul><li><b class="k">Event latency</b> = time from when an event occurs to when it is serviced.</li>
+<li><b>Interrupt latency</b> = arrival of interrupt → start of its service routine.</li>
+<li><b>Dispatch latency</b> = time to take the current process off the CPU and switch to another. Its <b>conflict phase</b>: (1) preempt any process running in <b>kernel mode</b>; (2) <b>low-priority processes release resources</b> needed by high-priority ones.</li></ul>
+<h4>Periodic tasks</h4>
+<p>Scheduler must be <b>preemptive, priority-based</b> (this alone only guarantees soft real-time). A periodic task has processing time <b>t</b>, deadline <b>d</b>, period <b>p</b>: <b>0 ≤ t ≤ d ≤ p</b>; rate = <b>1/p</b>.</p>
+<div class="tw"><table><tr><th>Algorithm</th><th>Priority rule</th><th>Type</th></tr>
+<tr><td>Rate Monotonic (RM)</td><td>Priority = 1/period → <b>shorter period = higher priority</b></td><td>Static</td></tr>
+<tr><td>Earliest Deadline First (EDF)</td><td><b>Earlier deadline = higher priority</b></td><td>Dynamic</td></tr></table></div>
+<div class="box ex"><div class="bt">💡 RM works: P1 (p=50, t=20), P2 (p=100, t=35)</div>
+<div class="gantt" data-g="P1:0-20,P2:20-50,P1:50-70,P2:70-75"></div><p>P1 has higher priority (shorter period). P2 is preempted at 50, finishes at <b>75</b> &lt; 100 ✓</p></div>
+<div class="box ex"><div class="bt">💡 RM fails, EDF works: P1 (p=50, t=25), P2 (p=80, t=35)</div>
+<p><b>RM:</b></p><div class="gantt" data-g="P1:0-25,P2:25-50,P1:50-75,P2:75-85"></div><p>P2 finishes at 85 → <b>misses its deadline at 80</b> ❌</p>
+<p><b>EDF:</b></p><div class="gantt" data-g="P1:0-25,P2:25-60,P1:60-85"></div><p>At t=50, P2's deadline (80) is earlier than P1's new deadline (100) → P2 keeps running, finishes at <b>60</b> ✓</p></div>
+<h4>Proportional share</h4>
+<p><b>T</b> shares are divided among all processes; an app with <b>N</b> shares (N &lt; T) gets <b>N/T</b> of the processor time. E.g., T = 100, N = 15 → 15%.</p>
+<h4>POSIX real-time (POSIX.1b)</h4>
+<div class="tw"><table><tr><th>Class</th><th>Behaviour</th></tr>
+<tr><td>SCHED_FIFO</td><td>FCFS with a FIFO queue; <b>no time-slicing</b> among equal priority</td></tr>
+<tr><td>SCHED_RR</td><td>Like FIFO but <b>time-slicing</b> among equal priority</td></tr></table></div>
+<p>Functions: <code>pthread_attr_getsched_policy()</code>, <code>pthread_attr_setsched_policy()</code>. (SCHED_OTHER = normal, non-real-time.)</p>
+</div></details>
+
+<details class="topic" id="c5-os"><summary><span class="chev">▶</span><span class="tname">OS Examples: Linux, Windows, Solaris</span></summary><div class="tbody">
+<h4>Linux up to 2.5 — O(1) scheduler</h4>
+<ul><li>Constant-time O(1); preemptive, priority-based; two ranges: <b>time-sharing</b> and <b>real-time</b>.</li>
+<li>Higher priority → larger q. Task runnable while it has time left (<b>active</b>); when used up (<b>expired</b>) it waits until all others use theirs.</li>
+<li>Per-CPU runqueue with <b>two priority arrays (active, expired)</b>; when no active tasks remain, arrays are <b>swapped</b>.</li>
+<li>Worked well but <b>poor response for interactive processes</b>.</li></ul>
+<h4>Linux 2.6.23+ — Completely Fair Scheduler (CFS)</h4>
+<ul><li><b>Scheduling classes</b>, each with a priority; picks highest-priority task in the highest class. Two included: <b>default</b> and <b>real-time</b>.</li>
+<li>Not fixed time slices — based on a <b>proportion of CPU time</b>.</li>
+<li>Quantum based on <b>nice value −20 to +19</b> (lower = higher priority).</li>
+<li><b>Target latency</b> = interval in which every task should run at least once (grows if more tasks).</li>
+<li>Each task has <b class="k">vruntime</b> (virtual run time) with a decay factor: <b>lower priority → higher decay rate</b>. Normal priority → vruntime = real run time.</li>
+<li>Next task = <b>lowest vruntime</b>.</li>
+<li>Global priorities: real-time <b>0–99</b>, normal <b>100–139</b> (nice −20 → 100, nice +19 → 139; so priority = 120 + nice). Lower number = higher priority.</li>
+<li>Load balancing + <b>NUMA-aware</b>: <b>scheduling domains</b> = sets of cores that share (e.g., cache) and can be balanced; keep threads from migrating between domains.</li></ul>
+<h4>Windows</h4>
+<ul><li><b>Priority-based preemptive</b>; highest-priority thread runs; the <b>dispatcher is the scheduler</b>.</li>
+<li>A thread runs until it (1) <b>blocks</b>, (2) <b>uses its time slice</b>, (3) is <b>preempted</b> by a higher-priority thread. Real-time threads can preempt non-real-time.</li>
+<li><b>32 levels</b>: variable class <b>1–15</b>, real-time class <b>16–31</b>, priority <b>0</b> = memory-management thread. Queue per priority; idle thread if nothing runnable.</li>
+<li>Priority classes: REALTIME, HIGH, ABOVE_NORMAL, NORMAL, BELOW_NORMAL, IDLE — all <b>variable except REALTIME</b>. Relative priorities: TIME_CRITICAL, HIGHEST, ABOVE_NORMAL, NORMAL, BELOW_NORMAL, LOWEST, IDLE. Class + relative → numeric priority; base = NORMAL in the class.</li>
+<li>Quantum expires → priority <b>lowered, never below base</b>. After a wait → priority <b>boosted</b> (depends on what it waited for). <b>Foreground window: 3× boost</b>.</li>
+<li>Windows 7 <b>user-mode scheduling (UMS)</b>: apps manage threads without the kernel; efficient for many threads (e.g., C++ ConcRT).</li></ul>
+<h4>Solaris</h4>
+<ul><li>Priority-based; <b>6 classes</b>: Time sharing (TS, default), Interactive (IA), Real time (RT), System (SYS), Fair share (FSS), Fixed priority (FP).</li>
+<li>A thread is in <b>one class at a time</b>; each class has its own algorithm. Time sharing = <b>MLFQ</b> with a loadable table (dispatch table) set by the sysadmin.</li>
+<li>Class priorities → per-thread <b>global priority</b>; highest runs; runs until it blocks, uses its slice, or is preempted; equal priorities → <b>RR</b>.</li></ul>
+</div></details>
+
+<details class="topic" id="c5-eval"><summary><span class="chev">▶</span><span class="tname">Algorithm Evaluation</span></summary><div class="tbody">
+<p class="what">How to choose an algorithm: first decide the <b>criteria</b>, then evaluate.</p>
+<div class="tw"><table><tr><th>Method</th><th>Idea</th><th>Pros / Cons</th></tr>
+<tr><td>Deterministic modeling</td><td>Analytic; take a <b>fixed workload</b> and compute each algorithm's performance</td><td>Simple, fast · needs <b>exact numbers</b>, applies only to <b>those inputs</b></td></tr>
+<tr><td>Queueing models</td><td>Describe arrivals and bursts with <b>probabilities</b> (often exponential, by mean); system = network of servers with queues</td><td>Gives utilization, queue length, wait time · <b>limited</b></td></tr>
+<tr><td>Simulation</td><td>Program a model of the system; clock is a variable; gather statistics. Data from random-number generators, distributions, or <b>trace tapes</b> (records of real events)</td><td><b>More accurate</b> · still limited</td></tr>
+<tr><td>Implementation</td><td>Build the scheduler in a real system and test</td><td>Most realistic · <b>high cost, high risk</b>, environments vary</td></tr></table></div>
+<div class="box ex"><div class="bt">💡 Deterministic example — all at 0: P1 = 10, P2 = 29, P3 = 3, P4 = 7, P5 = 12</div>
+<p><b>FCFS</b> → avg WT <b>28</b></p><div class="gantt" data-g="P1:0-10,P2:10-39,P3:39-42,P4:42-49,P5:49-61"></div>
+<p><b>Non-preemptive SJF</b> → avg WT <b>13</b> (best)</p><div class="gantt" data-g="P3:0-3,P4:3-10,P1:10-20,P5:20-32,P2:32-61"></div>
+<p><b>RR (q = 10)</b> → avg WT <b>23</b></p><div class="gantt" data-g="P1:0-10,P2:10-20,P3:20-23,P4:23-30,P5:30-40,P2:40-50,P5:50-52,P2:52-61"></div></div>
+<h4>Little's formula</h4>
+<div class="formula">n = λ × W</div>
+<p><b>n</b> = average queue length · <b>λ</b> = average arrival rate · <b>W</b> = average waiting time in the queue. Holds in <b>steady state</b> for <b>any</b> scheduling algorithm and arrival distribution.</p>
+<div class="box ex"><div class="bt">💡 Example</div><p>7 processes arrive per second, 14 in the queue → W = 14 / 7 = <b>2 seconds</b>.</p></div>
+</div></details>
+</section>
+
+<!-- ======================================================= FINAL REVIEW -->
+<section class="chapter final" id="must" data-ch="Final Review">
+<div class="chhead"><h2>⭐ Must-Know Before the Exam</h2></div>
+<details class="topic" id="f-must" open><summary><span class="chev">▶</span><span class="tname">Highest-priority facts (Ch 2–5)</span></summary><div class="tbody">
+<div class="grid2">
+<div class="mini"><b>Ch 2 — Structures</b><ul>
+<li>System-efficiency services = <b>resource allocation, logging, protection &amp; security</b>; the rest help the user.</li>
+<li>API → system-call interface (<b>table indexed by number</b>) → kernel.</li>
+<li>Parameters: <b>registers</b> (limited) · <b>block</b> address in register (Linux, Solaris) · <b>stack</b>.</li>
+<li>Compiler → object → <b>linker</b> → executable → <b>loader</b>; DLLs loaded once, shared.</li>
+<li>Apps are OS-specific: own <b>system calls + file formats</b>; ABI = OS + architecture.</li>
+<li>Microkernel: extend/port/reliable/secure vs <b>message-passing overhead</b>.</li>
+<li>Linux = monolithic + modules; Windows = mostly monolithic + microkernel; macOS = Mach + BSD hybrid.</li>
+<li>Boot: fixed location → bootstrap loader (BIOS/UEFI) → kernel. GRUB chooses kernel.</li>
+<li>Core dump = process; crash dump = kernel. Profiling = sampling; tracing = specific event.</li></ul></div>
+<div class="mini"><b>Ch 3 — Processes</b><ul>
+<li>Memory: text · data (globals) · heap (dynamic) · stack (params, return addr, locals).</li>
+<li>States: new → ready ⇄ running → terminated; running → waiting → <b>ready</b>.</li>
+<li>PCB: state, PC, registers, scheduling, memory, accounting, I/O status.</li>
+<li>Context switch = save/load PCB = <b>pure overhead</b>.</li>
+<li>fork() returns 0 to child; exec() replaces memory; wait() returns pid + status. n forks → 2ⁿ processes.</li>
+<li><b>Zombie</b>: child dead, no wait. <b>Orphan</b>: parent dead without wait.</li>
+<li>Bounded buffer (in/out) holds <b>N − 1</b>; counter version → <b>race condition</b>.</li>
+<li>Direct (1 link/pair, automatic) vs indirect (mailbox, many).</li>
+<li>Blocking = synchronous; both blocking = rendezvous; zero capacity → rendezvous.</li>
+<li>Ordinary pipe: unidirectional, parent–child. Named: bidirectional, any.</li>
+<li>Socket = IP:port; &lt;1024 well-known; 127.0.0.1 loopback. RPC: stub marshalls, XDR for endianness.</li></ul></div>
+<div class="mini"><b>Ch 4 — Threads</b><ul>
+<li>Benefits: responsiveness, resource sharing, economy, scalability.</li>
+<li>Concurrency = progress (1 core OK); parallelism = simultaneous (multi-core).</li>
+<li>Data parallelism = same op, split data; task parallelism = different ops.</li>
+<li><b>Amdahl: speedup ≤ 1/(S + (1−S)/N)</b>; limit 1/S.</li>
+<li>M:1 → one blocks all, no parallelism. 1:1 → overhead limits count (Windows, Linux). M:M → enough kernel threads. Two-level = M:M + binding.</li>
+<li>Pthreads = <b>specification</b>.</li>
+<li>Thread pools: faster, <b>bounded # threads</b>, separate task from creation.</li>
+<li>OpenMP <code>#pragma omp parallel</code> = threads = cores.</li>
+<li>Deferred cancellation = default, at cancellation points.</li>
+<li>TLS = per-thread, across calls. Upcall = kernel → thread library (LWP).</li>
+<li>Windows: TEB in user space; Linux: tasks via <code>clone()</code>.</li></ul></div>
+<div class="mini"><b>Ch 5 — CPU Scheduling</b><ul>
+<li>Non-preemptive = only when running → waiting or terminate.</li>
+<li>Dispatcher: switch context, user mode, jump; dispatch latency.</li>
+<li><b>TAT = completion − arrival; WT = TAT − burst; RT = first run − arrival.</b></li>
+<li>FCFS → convoy effect. SJF → optimal avg WT; SRTF = preemptive SJF.</li>
+<li>τ<sub>n+1</sub> = αt<sub>n</sub> + (1−α)τ<sub>n</sub>.</li>
+<li>RR: max wait (n−1)q; large q → FCFS; small q → overhead; 80% of bursts &lt; q.</li>
+<li>Priority: smallest number = highest; starvation → aging.</li>
+<li>MLFQ: processes move between queues; aging possible.</li>
+<li>PCS (library, within process) vs SCS (kernel, system-wide); Linux/macOS: SCS only.</li>
+<li>Affinity soft/hard; push/pull migration; CMT logical CPUs = cores × threads.</li>
+<li>RM: shorter period = higher priority (static). EDF: earlier deadline (dynamic).</li>
+<li>CFS: lowest vruntime. Windows: 32 levels (1–15 variable, 16–31 RT).</li>
+<li><b>Little: n = λW.</b></li></ul></div>
+</div></div></details>
+</section>
+
+<section class="chapter final" id="conf" data-ch="Final Review">
+<div class="chhead"><h2>⚠️ Common Confusions</h2></div>
+<details class="topic" id="f-conf" open><summary><span class="chev">▶</span><span class="tname">Side-by-side differences</span></summary><div class="tbody">
+<div class="vs"><div class="h">Profiling vs Tracing</div><div><b>Profiling</b>: periodically samples the instruction pointer → statistical trends.</div><div><b>Tracing</b>: records data about a specific event (e.g., each step of a system call; strace).</div></div>
+<div class="vs"><div class="h">Core dump vs Crash dump</div><div><b>Core dump</b>: an <b>application</b> failed → its process memory.</div><div><b>Crash dump</b>: the <b>OS</b> failed → kernel memory.</div></div>
+<div class="vs"><div class="h">Monolithic kernel vs Microkernel</div><div><b>Monolithic</b>: all services in the kernel, one level → fast, but harder to extend and less isolated.</div><div><b>Microkernel</b>: most services in user space, message passing → extensible, portable, reliable, secure, but slower.</div></div>
+<div class="vs"><div class="h">Layers vs Modules</div><div><b>Layers</b>: each layer uses only lower layers; layer 0 = hardware, N = UI. Rigid.</div><div><b>Modules (LKM)</b>: separate components talk via known interfaces, loaded as needed into the kernel. More flexible.</div></div>
+<div class="vs"><div class="h">Static vs Dynamic linking</div><div><b>Static</b>: library copied into every executable.</div><div><b>Dynamic (DLL)</b>: loaded only when needed, one shared copy.</div></div>
+<div class="vs"><div class="h">API vs System call vs ABI</div><div><b>API</b>: source-level functions programmers call (POSIX, Win32, Java). <b>System call</b>: the real request into the kernel.</div><div><b>ABI</b>: binary-level interface for an OS on a specific CPU architecture.</div></div>
+<div class="vs"><div class="h">Protection vs Security</div><div><b>Protection</b>: controlling access to resources inside the system.</div><div><b>Security</b>: defending against outsiders (authentication).</div></div>
+<div class="vs"><div class="h">BIOS/UEFI vs GRUB</div><div><b>BIOS</b> (in ROM) is the bootstrap firmware; <b>UEFI</b> replaces BIOS.</div><div><b>GRUB</b>: bootstrap loader that lets you choose the kernel/version/options.</div></div>
+<div class="vs"><div class="h">Program vs Process</div><div><b>Program</b>: passive file on disk.</div><div><b>Process</b>: active program in execution (loaded in memory). One program → many processes.</div></div>
+<div class="vs"><div class="h">Process vs Thread</div><div><b>Process</b>: own address space; heavy-weight to create.</div><div><b>Thread</b>: inside a process; shares code/data/files; own registers, PC, stack; light-weight.</div></div>
+<div class="vs"><div class="h">Ready vs Waiting</div><div><b>Ready</b>: has everything except the CPU.</div><div><b>Waiting</b>: needs an event (I/O) first; goes to Ready afterwards (never straight to Running).</div></div>
+<div class="vs"><div class="h">Zombie vs Orphan</div><div><b>Zombie</b>: child ended; parent alive but hasn't called wait().</div><div><b>Orphan</b>: parent ended without wait(); child still exists.</div></div>
+<div class="vs"><div class="h">Shared memory vs Message passing</div><div><b>Shared memory</b>: user processes control it; must synchronize.</div><div><b>Message passing</b>: send/receive through the OS, no shared variables.</div></div>
+<div class="vs"><div class="h">Direct vs Indirect communication</div><div><b>Direct</b>: name the process; exactly 1 link per pair; automatic.</div><div><b>Indirect</b>: through a mailbox; many processes; several links per pair.</div></div>
+<div class="vs"><div class="h">Blocking vs Non-blocking</div><div><b>Blocking (synchronous)</b>: sender waits until received / receiver waits until available.</div><div><b>Non-blocking (asynchronous)</b>: sender continues / receiver gets a message or null.</div></div>
+<div class="vs"><div class="h">Ordinary pipe vs Named pipe</div><div><b>Ordinary (anonymous)</b>: one-way; parent–child only.</div><div><b>Named</b>: two-way; no relationship needed; several processes.</div></div>
+<div class="vs"><div class="h">Concurrency vs Parallelism</div><div><b>Concurrency</b>: several tasks make progress (possible on one core by switching).</div><div><b>Parallelism</b>: several tasks run at the same instant (needs multiple cores).</div></div>
+<div class="vs"><div class="h">Data vs Task parallelism</div><div><b>Data</b>: same operation, different chunks of data.</div><div><b>Task</b>: different operations on different cores.</div></div>
+<div class="vs"><div class="h">User threads vs Kernel threads</div><div><b>User</b>: managed by a thread library.</div><div><b>Kernel</b>: managed by the OS kernel.</div></div>
+<div class="vs"><div class="h">Asynchronous vs Deferred cancellation</div><div><b>Asynchronous</b>: kill now.</div><div><b>Deferred</b> (default): stop at the next cancellation point, then cleanup.</div></div>
+<div class="vs"><div class="h">Local variable vs TLS</div><div><b>Local</b>: exists during one function call.</div><div><b>TLS</b>: per-thread copy that survives across calls.</div></div>
+<div class="vs"><div class="h">CPU-bound vs I/O-bound</div><div><b>CPU-bound</b>: long CPU bursts, little I/O.</div><div><b>I/O-bound</b>: short CPU bursts, lots of I/O. Behind a CPU-bound job in FCFS → convoy effect.</div></div>
+<div class="vs"><div class="h">Preemptive vs Non-preemptive</div><div><b>Preemptive</b>: OS can take the CPU away (arrival of shorter/higher-priority job, timer). Risk: race conditions.</div><div><b>Non-preemptive</b>: process keeps CPU until it terminates or waits (only cases 1 &amp; 4).</div></div>
+<div class="vs"><div class="h">Scheduler vs Dispatcher</div><div><b>Scheduler</b>: chooses the next process.</div><div><b>Dispatcher</b>: performs the switch (context, user mode, jump).</div></div>
+<div class="vs"><div class="h">Turnaround vs Waiting vs Response time</div><div><b>Turnaround</b>: arrival → completion. <b>Waiting</b>: only time in the ready queue.</div><div><b>Response</b>: arrival → first time on CPU.</div></div>
+<div class="vs"><div class="h">SJF vs SRTF</div><div><b>SJF</b>: non-preemptive; decides only when CPU becomes free.</div><div><b>SRTF</b>: preemptive; re-decides whenever a new process arrives.</div></div>
+<div class="vs"><div class="h">Starvation vs Aging</div><div><b>Starvation</b>: a low-priority process never runs (the problem).</div><div><b>Aging</b>: increase priority over time (the solution).</div></div>
+<div class="vs"><div class="h">Multilevel queue vs Multilevel feedback queue</div><div><b>MLQ</b>: process stays in its queue.</div><div><b>MLFQ</b>: process can move up/down between queues.</div></div>
+<div class="vs"><div class="h">PCS vs SCS</div><div><b>PCS</b>: threads of one process compete (thread library → LWP).</div><div><b>SCS</b>: all threads in the system compete (kernel → CPU).</div></div>
+<div class="vs"><div class="h">Soft vs Hard affinity · Push vs Pull migration</div><div><b>Soft</b>: OS tries to keep thread on CPU. <b>Hard</b>: process lists allowed CPUs.</div><div><b>Push</b>: periodic task moves work off busy CPUs. <b>Pull</b>: idle CPU takes work.</div></div>
+<div class="vs"><div class="h">Soft vs Hard real-time</div><div><b>Soft</b>: highest priority but no guarantee.</div><div><b>Hard</b>: must meet the deadline.</div></div>
+<div class="vs"><div class="h">Rate Monotonic vs EDF</div><div><b>RM</b>: static priority; shorter period = higher. Can miss deadlines.</div><div><b>EDF</b>: dynamic priority; earlier deadline = higher.</div></div>
+<div class="vs"><div class="h">SCHED_FIFO vs SCHED_RR</div><div><b>FIFO</b>: no time-slicing among equal priorities.</div><div><b>RR</b>: time-slicing among equal priorities.</div></div>
+</div></details>
+</section>
+
+<section class="chapter final" id="sheet" data-ch="Final Review">
+<div class="chhead"><h2>🧠 Quick Memorization Sheet</h2></div>
+<details class="topic" id="f-sheet" open><summary><span class="chev">▶</span><span class="tname">One-page cram sheet</span></summary><div class="tbody">
+<div class="memsheet">
+<div class="mini"><b>📐 Formulas</b><ul>
+<li>TAT = completion − arrival</li><li>WT = TAT − burst</li><li>RT = first run − arrival</li><li>Throughput = done ÷ time</li>
+<li>Amdahl: 1 / (S + (1−S)/N); max 1/S</li><li>τ<sub>n+1</sub> = αt<sub>n</sub> + (1−α)τ<sub>n</sub> (α=0 history only; α=1 last burst only)</li>
+<li>Little: n = λ·W</li><li>RR max wait: (n−1)·q</li><li>Proportional share: N/T</li>
+<li>Buffer items: (in − out + N) % N; max N − 1</li><li>n forks → 2ⁿ processes</li><li>Logical CPUs = cores × HW threads</li><li>Linux priority = 120 + nice (RT 0–99)</li><li>Periodic: 0 ≤ t ≤ d ≤ p, rate 1/p</li></ul></div>
+<div class="mini"><b>⚙️ Algorithms (one line each)</b><ul>
+<li><b>FCFS</b>: arrival order, non-preemptive, convoy effect</li>
+<li><b>SJF</b>: shortest next burst; optimal avg WT; needs prediction</li>
+<li><b>SRTF</b>: preemptive SJF, re-check on each arrival</li>
+<li><b>RR</b>: quantum q, back of queue; good response</li>
+<li><b>Priority</b>: smallest # first; starvation → aging; ties → RR (variant)</li>
+<li><b>MLQ / MLFQ</b>: several queues; MLFQ moves processes</li>
+<li><b>RM</b>: 1/period; <b>EDF</b>: earliest deadline</li>
+<li><b>CFS</b>: lowest vruntime</li></ul></div>
+<div class="mini"><b>📖 Key definitions</b><ul>
+<li>System call: programming interface to OS services</li><li>Process: program in execution</li><li>PCB: all info about a process</li>
+<li>Context switch: save old + load new state; overhead</li><li>Thread: execution unit inside a process</li>
+<li>Race condition: result depends on interleaving</li><li>Dispatch latency: stop one, start another</li>
+<li>Socket: IP + port</li><li>Stub: client-side proxy (RPC)</li><li>LWP: virtual processor for user threads</li>
+<li>TLS: per-thread data across calls</li><li>Relocation: assign final addresses</li><li>ABI: binary interface for OS + CPU</li></ul></div>
+<div class="mini"><b>📋 Lists to memorize</b><ul>
+<li>User services: UI, program execution, I/O, file system, communications, error detection</li>
+<li>System services: resource allocation, logging, protection/security</li>
+<li>Process parts: text, data, heap, stack (+ PC, registers)</li>
+<li>States: new, ready, running, waiting, terminated</li>
+<li>PCB: state, PC, registers, scheduling, memory, accounting, I/O</li>
+<li>Cooperate: info sharing, speedup, modularity, convenience</li>
+<li>Thread benefits: responsiveness, resource sharing, economy, scalability</li>
+<li>Multicore challenges: dividing, balance, data splitting, data dependency, testing</li>
+<li>Criteria: utilization↑, throughput↑, turnaround↓, waiting↓, response↓</li>
+<li>Android kill order: empty → background → service → visible → foreground</li>
+<li>Chrome: browser, renderer (sandbox, 1/site), plug-in</li>
+<li>Solaris classes: TS, IA, RT, SYS, FSS, FP</li></ul></div>
+<div class="mini"><b>🔢 Numbers &amp; names</b><ul>
+<li>APIs: Win32, POSIX, Java</li><li>Linux/Solaris: block parameter method</li>
+<li>Microkernel example: Mach (→ Darwin)</li><li>vmlinuz via <code>make</code></li>
+<li>Ports &lt; 1024 well known; 127.0.0.1 loopback</li><li>Mach ports: Kernel + Notify; <code>mach_msg()</code></li>
+<li>POSIX shm: shm_open → ftruncate → mmap</li><li>Pthreads: IEEE 1003.1c</li>
+<li>RR q: 10–100 ms; context switch &lt; 10 µs; 80% bursts &lt; q</li>
+<li>Windows: 32 levels; 1–15 variable; 16–31 RT; 0 = memory mgmt; foreground 3× boost</li>
+<li>Nice −20…+19; −20 → 100, +19 → 139</li></ul></div>
+<div class="mini"><b>✅ Rules that become T/F questions</b><ul>
+<li>Waiting → Running directly? <b>False</b> (→ Ready)</li>
+<li>Context switch does useful work? <b>False</b></li>
+<li>Pthreads is an implementation? <b>False</b> (specification)</li>
+<li>Many-to-one gives parallelism? <b>False</b></li>
+<li>Little's law only for FCFS? <b>False</b> (any algorithm)</li>
+<li>Disabled cancellation is discarded? <b>False</b> (pending)</li>
+<li>ALPC works across a network? <b>False</b> (same system)</li>
+<li>Most modern OSes use one pure structure? <b>False</b> (hybrid)</li>
+<li>Linux allows PTHREAD_SCOPE_PROCESS? <b>False</b></li>
+<li>Large q in RR → FCFS? <b>True</b></li>
+<li>Microkernel more reliable (less kernel code)? <b>True</b></li></ul></div>
+</div></div></details>
+</section>
+
+</main>
+</div>
+<button class="totop" onclick="window.scrollTo({top:0})" title="Back to top">↑</button>
+<script>
+(function(){
+"use strict";
+var KEY="os_ch2_5_summary_studied_v1",state={};
+try{state=JSON.parse(localStorage.getItem(KEY)||"{}")||{};}catch(e){state={};}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(state));}catch(e){}}
+var topics=[].slice.call(document.querySelectorAll("details.topic"));
+var side=document.getElementById("side");
+
+/* add "Studied" checkbox to each topic */
+topics.forEach(function(d){
+  var s=d.querySelector("summary");
+  var lab=document.createElement("label");lab.className="stud";
+  lab.innerHTML='<input type="checkbox"><span>Not studied</span>';
+  s.appendChild(lab);
+  var cb=lab.querySelector("input"),tx=lab.querySelector("span");
+  lab.addEventListener("click",function(e){e.stopPropagation();});
+  function apply(){var on=!!state[d.id];cb.checked=on;tx.textContent=on?"Studied":"Not studied";d.classList.toggle("done",on);var a=side.querySelector('a[href="#'+d.id+'"]');if(a)a.classList.toggle("done",on);}
+  cb.addEventListener("change",function(){if(cb.checked)state[d.id]=1;else delete state[d.id];save();apply();progress();});
+  d._apply=apply;
+});
+
+/* sidebar */
+var html='<div class="grp"><a class="big" href="#top">🏠 Start &amp; exam scope</a></div>';
+[].forEach.call(document.querySelectorAll("section.chapter"),function(sec){
+  var h=sec.querySelector(".chhead h2").textContent;
+  var ts=sec.querySelectorAll("details.topic");
+  html+='<div class="grp"><div class="gh"><span>'+h.replace(/—.*/,"").trim()+'</span><span data-cnt="'+sec.id+'"></span></div><a class="big" href="#'+sec.id+'">'+h+'</a>';
+  [].forEach.call(ts,function(t){html+='<a href="#'+t.id+'"><span class="ck"></span>'+t.querySelector(".tname").textContent+'</a>';});
+  html+='</div>';
+});
+side.innerHTML=html;
+topics.forEach(function(d){d._apply();});
+
+function progress(){
+  var done=topics.filter(function(d){return state[d.id];}).length;
+  document.getElementById("progTxt").textContent=done+"/"+topics.length+" studied";
+  document.getElementById("progBar").style.width=(100*done/topics.length)+"%";
+  [].forEach.call(document.querySelectorAll("[data-cnt]"),function(el){
+    var ts=document.querySelectorAll("#"+el.dataset.cnt+" details.topic"),n=0;
+    [].forEach.call(ts,function(t){if(state[t.id])n++;});el.textContent=n+"/"+ts.length;});
+}
+progress();
+
+/* open topic when navigated to */
+side.addEventListener("click",function(e){
+  var a=e.target.closest("a");if(!a)return;
+  var t=document.querySelector(a.getAttribute("href"));
+  if(t&&t.tagName==="DETAILS")t.open=true;
+  side.classList.remove("open");
+});
+document.getElementById("menuBtn").onclick=function(){side.classList.toggle("open");};
+document.getElementById("main").addEventListener("click",function(){side.classList.remove("open");});
+if(location.hash){var t=document.querySelector(location.hash);if(t&&t.tagName==="DETAILS")t.open=true;}
+
+/* expand / collapse per chapter */
+[].forEach.call(document.querySelectorAll("[data-exp]"),function(b){b.onclick=function(){[].forEach.call(document.querySelectorAll("#"+b.dataset.exp+" details.topic"),function(d){d.open=true;});};});
+[].forEach.call(document.querySelectorAll("[data-col]"),function(b){b.onclick=function(){[].forEach.call(document.querySelectorAll("#"+b.dataset.col+" details.topic"),function(d){d.open=false;});};});
+
+/* Gantt charts from data-g="P1:0-24,P2:24-27" */
+var COLORS={P1:"#1f3155",P2:"#173a28",P3:"#43331a",P4:"#43213c",P5:"#2c2852",T1:"#1f3155",T2:"#173a28",T3:"#43331a",T4:"#43213c"};
+[].forEach.call(document.querySelectorAll(".gantt[data-g]"),function(g){
+  var segs=g.dataset.g.split(",").map(function(s){var p=s.split(":"),r=p[1].split("-");return {n:p[0],a:+r[0],b:+r[1]};});
+  var showT=!g.hasAttribute("data-not");
+  var w=document.createElement("div");w.className="gscroll";g.parentNode.insertBefore(w,g);w.appendChild(g);
+  g.innerHTML=segs.map(function(s,i){
+    return '<div class="s" style="flex:'+(s.b-s.a)+' 0 0;background:'+(COLORS[s.n]||"#2a3038")+'">'+s.n.replace(/(\d)/,"<sub>$1</sub>")+
+      (showT&&i===0?'<span class="t0">'+s.a+'</span>':'')+(showT?'<span class="t1">'+s.b+'</span>':'')+'</div>';
+  }).join("");
+});
+})();
+</script>
+</body>
+</html>
